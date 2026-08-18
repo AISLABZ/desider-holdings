@@ -52,6 +52,20 @@
   button.btn.primary{background:var(--accent);color:#fff;border-color:transparent}
   button.btn.primary:hover{filter:brightness(1.06)}
 
+  /* ---------- save bar ---------- */
+  .savebar{
+    display:none; align-items:center; gap:10px; margin:0 0 16px;
+    padding:10px 13px; border-radius:10px; font-size:12.5px;
+    border:1px solid var(--ring); background:var(--surface-1); box-shadow:var(--shadow);
+  }
+  .savebar.show{display:flex}
+  .savebar.unsaved{border-color:var(--warning); background:rgba(250,178,25,.10)}
+  .savebar .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:var(--warning)}
+  .savebar.saved .dot{background:var(--good)}
+  .savebar b{font-weight:600}
+  .savebar .hint{color:var(--ink-2)}
+  button.btn.pulse{box-shadow:0 0 0 3px rgba(250,178,25,.35)}
+
   /* ---------- kpi row ---------- */
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin-bottom:18px}
   .kpi{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
@@ -177,9 +191,13 @@
       <button class="btn" onclick="expandAll(true)">Expand all</button>
       <button class="btn" onclick="expandAll(false)">Collapse all</button>
       <button class="btn" onclick="toggleTheme()" id="themeBtn">Dark mode</button>
-      <button class="btn primary" onclick="exportState()">Export state (JSON)</button>
+      <button class="btn" onclick="document.getElementById('loadFile').click()">Open saved file</button>
+      <button class="btn primary" onclick="saveProgress()" id="saveBtn">Save progress</button>
+      <input type="file" id="loadFile" accept=".json,application/json" style="display:none"
+             onchange="loadState(this.files[0]); this.value='';">
     </div>
   </header>
+  <div id="saveBar" class="savebar"></div>
 
   <div class="kpis" id="kpis"></div>
 
@@ -268,12 +286,13 @@ function renderTop(){
     "Project Manager <b>" + DATA.meta.pm + "</b> &nbsp;·&nbsp; " + DATA.meta.framework +
     " &nbsp;·&nbsp; Source: " + DATA.meta.boardSource +
     " &nbsp;·&nbsp; Dashboard v" + DATA.meta.version + ", " + fmtDate(DATA.meta.generated);
-  document.getElementById("foot").innerHTML = (DATA.meta.logPrivate
-    ? "<b>Keeping this current:</b> tick sub-tasks as they complete, then press <b>Export state (JSON)</b> " +
-      "and send the file to the PM. The decision and update log is held privately and is not part of this copy.<br>"
-    : "<b>How to keep this current:</b> tick sub-tasks as they complete, add notes below, then press " +
-      "<b>Export state (JSON)</b> and send the file back to Claude with your meeting minutes. " +
-      "The next version is regenerated from that state, so nothing is lost.<br>") +
+  document.getElementById("foot").innerHTML =
+    "<b>Saving your work:</b> this page has no server and stores nothing in your browser, so changes " +
+    "are lost when you close it. Tick tasks" + (DATA.meta.logPrivate ? "" : " and add notes") +
+    ", press <b>Save progress</b> to download the updated file, and use <b>Open saved file</b> to pick " +
+    "up where you left off. Send that file to the PM to have the published dashboard rebuilt from it — " +
+    "that is what makes an update visible to everyone rather than just you.<br>" +
+    (DATA.meta.logPrivate ? "The decision and update log is held privately and is not part of this copy.<br>" : "") +
     DATA.meta.note;
 }
 
@@ -447,7 +466,7 @@ function addNote(){
   const el = document.getElementById("noteInput");
   const v = el.value.trim(); if(!v) return;
   DATA.log.push({ date: new Date().toISOString().slice(0,10), entry: v });
-  el.value = ""; renderLog();
+  el.value = ""; renderLog(); markDirty();
 }
 
 /* ---------- interactions ---------- */
@@ -461,25 +480,105 @@ function tick(wpId, tId, val){
   const wp = DATA.workPackages.find(w=>w.id===wpId);
   const t = wp.tasks.find(x=>x.id===tId);
   t.done = val;
+  markDirty();
   renderKpis(); renderCards();
 }
+
+/* ---------- save / restore ---------------------------------------------------
+   This page has no server and deliberately uses no browser storage, so it
+   cannot remember changes on its own — closing the tab discards them. Progress
+   is kept in a JSON file you save and re-open. That file is also what makes the
+   change durable: send it to the PM and the published dashboard is rebuilt from
+   it, so everyone sees the update rather than just your browser.
+----------------------------------------------------------------------------- */
+let dirty = false, lastSaved = null;
+
+function markDirty(){ dirty = true; renderSaveBar(); }
+
+function renderSaveBar(){
+  const bar = document.getElementById("saveBar");
+  const btn = document.getElementById("saveBtn");
+  if(!bar) return;
+  if(dirty){
+    bar.className = "savebar show unsaved";
+    bar.innerHTML = '<span class="dot"></span><b>Unsaved changes.</b>' +
+      '<span class="hint">This page can\'t remember them on its own — press ' +
+      '<b>Save progress</b> to download your updated file, then re-open it here next time ' +
+      '(or send it to the PM to publish for everyone).</span>';
+    btn.classList.add("pulse");
+  } else if(lastSaved){
+    bar.className = "savebar show saved";
+    bar.innerHTML = '<span class="dot"></span><b>Saved at '+lastSaved+'.</b>' +
+      '<span class="hint">Keep that file — re-open it with <b>Open saved file</b> to carry on ' +
+      'where you left off.</span>';
+    btn.classList.remove("pulse");
+  } else {
+    bar.className = "savebar";
+    btn.classList.remove("pulse");
+  }
+}
+
+function saveProgress(){
+  const stamp = new Date();
+  DATA.meta.savedAt = stamp.toISOString().slice(0,16).replace("T"," ");
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "sceib-dashboard-state-" + stamp.toISOString().slice(0,10) + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  dirty = false;
+  lastSaved = stamp.toTimeString().slice(0,5);
+  renderSaveBar();
+}
+
+function loadState(file){
+  if(!file) return;
+  const fr = new FileReader();
+  fr.onload = () => {
+    let parsed;
+    try { parsed = JSON.parse(fr.result); }
+    catch(e){ return failLoad("That file isn't valid JSON."); }
+    if(!parsed || !Array.isArray(parsed.workPackages) || !parsed.workPackages.length)
+      return failLoad("That doesn't look like a dashboard state file — no work packages in it.");
+    ["meta","people","priorities","workPackages","milestones","log"].forEach(k=>{
+      if(parsed[k] !== undefined) DATA[k] = parsed[k];
+    });
+    if(!Array.isArray(DATA.log)) DATA.log = [];
+    openSet.clear();
+    dirty = false;
+    lastSaved = null;
+    renderTop(); renderKpis(); renderPrio(); fillFilters();
+    renderCards(); renderTimeline(); renderLog();
+    const bar = document.getElementById("saveBar");
+    bar.className = "savebar show saved";
+    const done = DATA.workPackages.reduce((a,w)=>a+w.tasks.filter(t=>t.done).length,0);
+    const all  = DATA.workPackages.reduce((a,w)=>a+w.tasks.length,0);
+    bar.innerHTML = '<span class="dot"></span><b>Loaded '+file.name+'.</b>' +
+      '<span class="hint">Version '+(DATA.meta.version||"?")+' · '+done+' of '+all+' tasks complete.</span>';
+  };
+  fr.onerror = () => failLoad("Couldn't read that file.");
+  fr.readAsText(file);
+}
+
+function failLoad(msg){
+  const bar = document.getElementById("saveBar");
+  bar.className = "savebar show unsaved";
+  bar.innerHTML = '<span class="dot"></span><b>Couldn\'t load that file.</b><span class="hint">'+msg+
+    ' Pick the .json file you saved from this dashboard.</span>';
+}
+
+window.addEventListener("beforeunload", e => {
+  if(dirty){ e.preventDefault(); e.returnValue = ""; }
+});
 function toggleTheme(){
   const r = document.documentElement;
   const dark = r.getAttribute("data-theme") === "dark";
   r.setAttribute("data-theme", dark ? "light" : "dark");
   document.getElementById("themeBtn").textContent = dark ? "Dark mode" : "Light mode";
 }
-function exportState(){
-  const blob = new Blob([JSON.stringify(DATA, null, 2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "sceib-dashboard-state-" + new Date().toISOString().slice(0,10) + ".json";
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
 function render(){ renderCards(); }
-renderTop(); renderKpis(); renderPrio(); fillFilters(); renderCards(); renderTimeline(); renderLog();
+renderTop(); renderKpis(); renderPrio(); fillFilters(); renderCards(); renderTimeline(); renderLog(); renderSaveBar();
 if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){ toggleTheme(); }
 </script>
 </body>
