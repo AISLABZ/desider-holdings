@@ -105,6 +105,10 @@
   .chip.decision{color:var(--ink-1);border:1px dashed var(--axis);background:transparent;font-weight:600}
   .chip.overdue{color:var(--critical);font-weight:600}
   .chip.done{color:#006300;font-weight:600;background:rgba(12,163,12,.10)}
+  .chip.with{background:transparent;border:1px dashed var(--axis);color:var(--ink-2)}
+  .chip.unowned{color:#8a6100;background:rgba(250,178,25,.14);font-weight:600}
+  :root[data-theme="dark"] .chip.unowned{color:var(--warning)}
+  ul.tasks .own{margin-left:2px}
   :root[data-theme="dark"] .chip.done{color:var(--good);background:rgba(12,163,12,.16)}
   .card.secured .head h3{}
   .tlrow.achieved .tldate,.tlrow.achieved .tllab{opacity:.72}
@@ -313,7 +317,8 @@ function renderPrio(){
 
 /* ---------- filters ---------- */
 function fillFilters(){
-  const owners = [...new Set(DATA.workPackages.flatMap(w=>[w.owner, ...w.tasks.map(t=>t.owner)]))].sort();
+  const owners = [...new Set(DATA.workPackages.flatMap(w=>
+    [w.owner, ...(w.support||[]), ...w.tasks.flatMap(t=>[t.owner, ...(t.with||[])])]))].sort();
   document.getElementById("fOwner").innerHTML =
     '<option value="">All owners</option>' + owners.map(o=>'<option value="'+o+'">'+person(o)+'</option>').join("");
   const themes = [...new Set(DATA.workPackages.map(w=>w.theme))].sort();
@@ -329,7 +334,8 @@ function matches(wp){
   const st  = document.getElementById("fState").value;
   if(rag && wp.rag !== rag) return false;
   if(th && wp.theme !== th) return false;
-  if(own && wp.owner !== own && !wp.tasks.some(t=>t.owner===own)) return false;
+  if(own && wp.owner !== own && !(wp.support||[]).includes(own) &&
+     !wp.tasks.some(t=>t.owner===own || (t.with||[]).includes(own))) return false;
   if(st === "open" && wp.tasks.every(t=>t.done)) return false;
   if(st === "decision" && !wp.decision) return false;
   if(st === "unowned" && wp.owner !== "TBC" && !wp.tasks.some(t=>t.owner==="TBC")) return false;
@@ -366,7 +372,8 @@ function renderCards(){
           '<div class="chips">'+
             '<span class="chip status '+wp.rag+'">'+ICON[wp.rag]+' '+LABEL[wp.rag]+'</span>'+
             '<span class="chip">'+wp.theme+'</span>'+
-            '<span class="chip">Owner: '+person(wp.owner)+'</span>'+
+            '<span class="chip'+(wp.owner==="TBC"?' unowned':'')+'">Owner: '+person(wp.owner)+'</span>'+
+            ((wp.support||[]).length?'<span class="chip">With: '+wp.support.map(person).join(", ")+'</span>':'')+
             '<span class="chip">Sponsor: '+person(wp.sponsor)+'</span>'+
             dueChip +
             (wp.decision?'<span class="chip decision">Decision needed</span>':'')+
@@ -385,6 +392,7 @@ function renderCards(){
             '<input type="checkbox" '+(t.done?"checked":"")+' onchange="tick(\''+wp.id+'\',\''+t.id+'\',this.checked)">'+
             '<span class="tt">'+t.t+'</span>'+
             '<span class="own chip">'+person(t.owner)+'</span>'+
+            ((t.with||[]).map(w=>'<span class="own chip with">+ '+person(w)+'</span>').join(""))+
           '</li>').join("") + '</ul>'+
         '<div class="deps">'+
           '<span><b>Depends on:</b> '+(wp.dependsOn.length?wp.dependsOn.join(", "):"nothing")+'</span>'+
