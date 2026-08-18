@@ -89,6 +89,31 @@
   .prio .p .st{font-size:11.5px;font-weight:600;margin-top:3px;display:flex;align-items:center;gap:5px}
   .prio .p .wpref{font-size:11px;color:var(--ink-3);margin-top:2px}
 
+  /* ---------- master milestone table ---------- */
+  .mmwrap{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;
+          box-shadow:var(--shadow);overflow-x:auto}
+  table.mm{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}
+  table.mm th{
+    text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--ink-2);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--axis);white-space:nowrap;
+  }
+  table.mm td{padding:11px 14px;border-bottom:1px solid var(--grid);vertical-align:middle}
+  table.mm tr:last-child td{border-bottom:none}
+  table.mm tbody tr{cursor:pointer}
+  table.mm tbody tr:hover{background:var(--chip)}
+  table.mm .ref{font-weight:700;color:var(--ink-2);font-size:11.5px;letter-spacing:.05em;white-space:nowrap}
+  table.mm .name{font-weight:600}
+  table.mm .sub{font-size:11.5px;color:var(--ink-3);font-weight:400}
+  table.mm .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  table.mm .st{font-weight:600;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+  table.mm .st.critical{color:var(--critical)} table.mm .st.serious{color:var(--serious)}
+  table.mm .st.warning{color:#8a6100}       table.mm .st.good{color:#006300}
+  :root[data-theme="dark"] table.mm .st.warning{color:var(--warning)}
+  :root[data-theme="dark"] table.mm .st.good{color:var(--good)}
+  table.mm .bar{width:74px;height:7px;border-radius:4px;background:var(--grid);overflow:hidden;display:inline-block;vertical-align:middle;margin-right:7px}
+  table.mm .bar > i{display:block;height:100%;border-radius:4px;background:var(--s450)}
+  table.mm td.late{color:var(--critical);font-weight:600}
+
   /* ---------- filters ---------- */
   .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:10px 12px;box-shadow:var(--shadow)}
   .filters input[type=search], .filters select{
@@ -209,7 +234,12 @@
   </section>
 
   <section>
-    <h2 class="sec">Work packages</h2>
+    <h2 class="sec">Master milestone plan — top layer</h2>
+    <div class="mmwrap"><table class="mm" id="mmTable"></table></div>
+  </section>
+
+  <section>
+    <h2 class="sec">Work packages — full detail</h2>
     <div class="legend">
       <span><i class="sw" style="background:var(--critical)"></i> Critical — at risk of failing</span>
       <span><i class="sw" style="background:var(--serious)"></i> Serious — needs a decision now</span>
@@ -342,6 +372,43 @@ function renderPrio(){
   }).join("");
 }
 
+/* ---------- master milestone plan (top layer only) ---------------------------
+   Deliberately no sub-tasks: milestone, owner, date, status, progress. This is
+   the view for a board or exec audience; the work-package cards below carry the
+   detail. Clicking a row jumps to that work package and opens it. --------- */
+function renderMM(){
+  const rows = DATA.workPackages.map(wp=>{
+    const p = pct(wp), d = daysFrom(wp.due);
+    let when, lateCls = "";
+    if(wp.completedDate){ when = "Complete " + fmtDate(wp.completedDate); }
+    else if(!wp.due){ when = "Not set"; lateCls = "late"; }
+    else { when = fmtDate(wp.due); if(d < 0) lateCls = "late"; }
+    const owner = wp.owner === "TBC" ? "<span style='color:var(--warning);font-weight:600'>Unassigned</span>"
+                                     : person(wp.owner);
+    return '<tr onclick="jumpTo(\''+wp.id+'\')">'+
+      '<td class="ref">'+(wp.mm||wp.id)+'</td>'+
+      '<td><div class="name">'+wp.title+'</div><div class="sub">'+wp.theme+
+        (wp.priority?' · original priority '+wp.priority:'')+'</div></td>'+
+      '<td>'+owner+(((wp.support||[]).length)?'<div class="sub">with '+wp.support.map(person).join(", ")+'</div>':'')+'</td>'+
+      '<td class="num '+lateCls+'">'+when+
+        (wp.dueSource==="proposed"&&!wp.completedDate?'<div class="sub">proposed</div>':'')+'</td>'+
+      '<td><span class="st '+wp.rag+'">'+ICON[wp.rag]+' '+LABEL[wp.rag]+'</span></td>'+
+      '<td class="num"><span class="bar"><i style="width:'+Math.max(p,2)+'%"></i></span>'+p+'%</td>'+
+    '</tr>';
+  }).join("");
+  document.getElementById("mmTable").innerHTML =
+    '<thead><tr><th>Ref</th><th>Milestone</th><th>Owner</th><th>Target</th><th>Status</th><th>Progress</th></tr></thead>'+
+    '<tbody>'+rows+'</tbody>';
+}
+
+function jumpTo(id){
+  ["q","fRag","fOwner","fTheme","fState"].forEach(k=>{ const el=document.getElementById(k); if(el) el.value=""; });
+  openSet.add(id);
+  renderCards();
+  const el = document.getElementById("c-"+id);
+  if(el) el.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
 /* ---------- filters ---------- */
 function fillFilters(){
   const owners = [...new Set(DATA.workPackages.flatMap(w=>
@@ -392,7 +459,7 @@ function renderCards(){
         '<div class="rag '+wp.rag+'"></div>'+
         '<div class="caret">▶</div>'+
         '<div class="hmain">'+
-          '<h3><span class="wpid">'+wp.id+'</span> '+wp.title+
+          '<h3><span class="wpid">'+(wp.mm?wp.mm+" · ":"")+wp.id+'</span> '+wp.title+
             (wp.priority?'<span class="chip">Original priority '+wp.priority+'</span>':'')+
             (wp.milestone?'<span class="chip">Key milestone</span>':'')+'</h3>'+
           (wp.openQuestion?'<div class="q">“'+wp.openQuestion+'”</div>':'')+
@@ -487,7 +554,7 @@ function tick(wpId, tId, val){
   const t = wp.tasks.find(x=>x.id===tId);
   t.done = val;
   markDirty();
-  renderKpis(); renderCards();
+  renderKpis(); renderMM(); renderCards();
 }
 
 /* ---------- save / restore ---------------------------------------------------
@@ -605,7 +672,7 @@ function loadState(file){
     openSet.clear();
     dirty = false;
     lastSaved = null;
-    renderTop(); renderKpis(); renderPrio(); fillFilters();
+    renderTop(); renderKpis(); renderPrio(); renderMM(); fillFilters();
     renderCards(); renderTimeline(); renderLog();
     const bar = document.getElementById("saveBar");
     bar.className = "savebar show saved";
@@ -637,7 +704,7 @@ function toggleTheme(){
 function render(){ renderCards(); }
 
 const restored = restoreAutosave();
-renderTop(); renderKpis(); renderPrio(); fillFilters(); renderCards(); renderTimeline(); renderLog();
+renderTop(); renderKpis(); renderPrio(); renderMM(); fillFilters(); renderCards(); renderTimeline(); renderLog();
 renderSaveBar();
 if(restored === "superseded"){
   const bar = document.getElementById("saveBar");

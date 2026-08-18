@@ -4,7 +4,7 @@
     "subtitle": "Delivery Dashboard",
     "boardSource": "Attiq Qureshi, \"Catch up.\" — 17 Aug 2026, 05:46 BST",
     "pm": "Salman Usman",
-    "version": 4,
+    "version": 5,
     "generated": "2026-08-18",
     "framework": "PRINCE2 / MSP",
     "note": "PUBLIC REDACTED COPY. Email addresses, financial figures and partner commercial terms have been removed. Statuses and RAG ratings marked 'proposed' are the PM's working assumption, not stated in the source. The unredacted master is held privately.",
@@ -142,7 +142,8 @@
           "done": true
         }
       ],
-      "completedDate": "2026-08-18"
+      "completedDate": "2026-08-18",
+      "mm": "MM-1"
     },
     {
       "id": "WP2",
@@ -212,7 +213,8 @@
           "owner": "SU",
           "done": false
         }
-      ]
+      ],
+      "mm": "MM-2"
     },
     {
       "id": "WP3",
@@ -279,7 +281,8 @@
           "owner": "TBC",
           "done": false
         }
-      ]
+      ],
+      "mm": "MM-3"
     },
     {
       "id": "WP4",
@@ -365,7 +368,8 @@
             "FM"
           ]
         }
-      ]
+      ],
+      "mm": "MM-4"
     },
     {
       "id": "WP5",
@@ -450,7 +454,8 @@
       ],
       "support": [
         "AM"
-      ]
+      ],
+      "mm": "MM-5"
     },
     {
       "id": "WP6",
@@ -529,7 +534,8 @@
           "owner": "SU",
           "done": false
         }
-      ]
+      ],
+      "mm": "MM-6"
     },
     {
       "id": "WP7",
@@ -621,7 +627,8 @@
       ],
       "support": [
         "AM"
-      ]
+      ],
+      "mm": "MM-7"
     },
     {
       "id": "WP8",
@@ -695,7 +702,8 @@
           "owner": "AQ",
           "done": false
         }
-      ]
+      ],
+      "mm": "MM-8"
     }
   ],
   "milestones": [
