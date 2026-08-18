@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desider — SCIEB Programme Dashboard</title>
+<style>
+  :root{
+    color-scheme: light;
+    --surface-1:#fcfcfb; --page:#f9f9f7;
+    --ink-1:#0b0b0b; --ink-2:#52514e; --ink-3:#898781;
+    --grid:#e1e0d9; --axis:#c3c2b7;
+    --ring:rgba(11,11,11,0.10);
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+    --s100:#cde2fb; --s250:#86b6ef; --s450:#2a78d6; --s550:#1c5cab; --s650:#104281;
+    --accent:#2a78d6;
+    --chip:rgba(11,11,11,0.05);
+    --shadow:0 1px 2px rgba(11,11,11,.06), 0 8px 24px rgba(11,11,11,.05);
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --surface-1:#1a1a19; --page:#0d0d0d;
+    --ink-1:#ffffff; --ink-2:#c3c2b7; --ink-3:#898781;
+    --grid:#2c2c2a; --axis:#383835;
+    --ring:rgba(255,255,255,0.10);
+    --s100:#104281; --s250:#184f95; --s450:#3987e5; --s550:#86b6ef; --s650:#cde2fb;
+    --accent:#3987e5;
+    --chip:rgba(255,255,255,0.06);
+    --shadow:none;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--page); color:var(--ink-1);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:14px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1240px;margin:0 auto;padding:24px 20px 80px}
+
+  /* ---------- header ---------- */
+  header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+  .title h1{font-size:22px;margin:0 0 4px;letter-spacing:-.01em}
+  .title p{margin:0;color:var(--ink-2);font-size:12.5px}
+  .title p b{color:var(--ink-1);font-weight:600}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap}
+  button.btn{
+    font:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;cursor:pointer;
+    background:var(--surface-1);color:var(--ink-1);border:1px solid var(--ring);
+  }
+  button.btn:hover{background:var(--chip)}
+  button.btn.primary{background:var(--accent);color:#fff;border-color:transparent}
+  button.btn.primary:hover{filter:brightness(1.06)}
+
+  /* ---------- kpi row ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin-bottom:18px}
+  .kpi{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
+  .kpi .lab{font-size:11.5px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+  .kpi .val{font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+  .kpi .sub{font-size:11.5px;color:var(--ink-3);margin-top:4px}
+  .meter{height:8px;border-radius:4px;background:var(--grid);overflow:hidden;margin-top:9px}
+  .meter > i{display:block;height:100%;border-radius:4px;background:var(--s450)}
+
+  /* ---------- section ---------- */
+  section{margin-bottom:22px}
+  h2.sec{font-size:12.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-2);margin:0 0 10px;font-weight:600}
+
+  /* ---------- priorities ---------- */
+  .prio{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+  .prio .p{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:13px 14px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:flex-start}
+  .prio .p .ic{font-size:15px;line-height:1.35;flex:0 0 auto}
+  .prio .p .tx{font-size:13px}
+  .prio .p .st{font-size:11.5px;font-weight:600;margin-top:3px;display:flex;align-items:center;gap:5px}
+  .prio .p .wpref{font-size:11px;color:var(--ink-3);margin-top:2px}
+
+  /* ---------- filters ---------- */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:10px 12px;box-shadow:var(--shadow)}
+  .filters input[type=search], .filters select{
+    font:inherit;font-size:12.5px;padding:6px 9px;border-radius:8px;
+    border:1px solid var(--ring);background:var(--page);color:var(--ink-1);
+  }
+  .filters input[type=search]{min-width:210px}
+  .filters .spacer{flex:1}
+  .count{font-size:12px;color:var(--ink-2)}
+
+  /* ---------- work packages ---------- */
+  .cards{display:flex;flex-direction:column;gap:12px}
+  .card{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+  .card .head{display:flex;gap:13px;align-items:flex-start;padding:14px 16px;cursor:pointer}
+  .card .head:hover{background:var(--chip)}
+  .rag{flex:0 0 auto;width:9px;align-self:stretch;border-radius:5px;margin:2px 0}
+  .rag.critical{background:var(--critical)} .rag.serious{background:var(--serious)}
+  .rag.warning{background:var(--warning)} .rag.good{background:var(--good)}
+  .card .hmain{flex:1;min-width:0}
+  .card h3{margin:0 0 3px;font-size:15.5px;letter-spacing:-.01em;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .wpid{font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.06em}
+  .q{font-size:12.5px;color:var(--ink-2);margin:2px 0 8px;font-style:italic}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-size:11px;padding:2.5px 8px;border-radius:999px;background:var(--chip);color:var(--ink-2);white-space:nowrap}
+  .chip.status{font-weight:600;display:inline-flex;align-items:center;gap:4px}
+  .chip.status.critical{color:var(--critical)} .chip.status.serious{color:var(--serious)}
+  .chip.status.warning{color:#8a6100} .chip.status.good{color:#006300}
+  :root[data-theme="dark"] .chip.status.warning{color:var(--warning)}
+  :root[data-theme="dark"] .chip.status.good{color:var(--good)}
+  .chip.decision{color:var(--ink-1);border:1px dashed var(--axis);background:transparent;font-weight:600}
+  .chip.overdue{color:var(--critical);font-weight:600}
+  .card .hright{flex:0 0 auto;text-align:right;min-width:104px}
+  .pct{font-size:19px;font-weight:600;letter-spacing:-.01em}
+  .pctsub{font-size:11px;color:var(--ink-3)}
+  .card .hright .meter{width:100px;margin-left:auto}
+  .caret{flex:0 0 auto;color:var(--ink-3);font-size:12px;padding-top:4px;transition:transform .15s}
+  .card.open .caret{transform:rotate(90deg)}
+  .body{display:none;border-top:1px solid var(--grid);padding:14px 16px 16px}
+  .card.open .body{display:block}
+  .why{font-size:12.5px;color:var(--ink-2);background:var(--chip);border-radius:8px;padding:9px 11px;margin-bottom:12px}
+  .why b{color:var(--ink-1)}
+  ul.tasks{list-style:none;margin:0;padding:0}
+  ul.tasks li{display:flex;gap:10px;align-items:flex-start;padding:7px 6px;border-radius:8px}
+  ul.tasks li:hover{background:var(--chip)}
+  ul.tasks li + li{border-top:1px solid var(--grid)}
+  ul.tasks input[type=checkbox]{margin-top:2px;width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto}
+  ul.tasks .tt{flex:1;font-size:13px}
+  ul.tasks li.done .tt{text-decoration:line-through;color:var(--ink-3)}
+  ul.tasks .own{flex:0 0 auto}
+  .deps{margin-top:12px;font-size:12px;color:var(--ink-2);display:flex;gap:16px;flex-wrap:wrap}
+  .deps b{color:var(--ink-1);font-weight:600}
+
+  /* ---------- timeline ---------- */
+  .tl{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+  .tlrow{display:flex;gap:12px;align-items:center;padding:8px 4px;border-radius:8px}
+  .tlrow + .tlrow{border-top:1px solid var(--grid)}
+  .tlrow:hover{background:var(--chip)}
+  .tldate{flex:0 0 96px;font-size:12px;font-variant-numeric:tabular-nums;color:var(--ink-2);font-weight:600}
+  .tldot{flex:0 0 auto;width:10px;height:10px;border-radius:50%;box-shadow:0 0 0 2px var(--surface-1)}
+  .tllab{flex:1;font-size:13px}
+  .tlwhen{flex:0 0 auto;font-size:11.5px;color:var(--ink-3)}
+
+  /* ---------- log ---------- */
+  .log{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+  .log .item{display:flex;gap:12px;padding:8px 0;font-size:13px}
+  .log .item + .item{border-top:1px solid var(--grid)}
+  .log .d{flex:0 0 96px;color:var(--ink-3);font-size:12px;font-variant-numeric:tabular-nums}
+  .noteform{display:flex;gap:8px;margin-top:12px}
+  .noteform input{flex:1;font:inherit;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid var(--ring);background:var(--page);color:var(--ink-1)}
+
+  footer{margin-top:26px;font-size:11.5px;color:var(--ink-3);line-height:1.7}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-2);margin-bottom:10px}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .sw{width:9px;height:9px;border-radius:3px;display:inline-block}
+  .hidden{display:none !important}
+  @media (max-width:640px){
+    .card .head{flex-wrap:wrap}
+    .card .hright{min-width:0;text-align:left;width:100%}
+    .card .hright .meter{margin-left:0;width:100%}
+  }
+  @media print{ .toolbar,.filters,.noteform{display:none} .card .body{display:block} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="title">
+      <h1 id="progTitle">Programme Dashboard</h1>
+      <p id="progMeta"></p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" onclick="expandAll(true)">Expand all</button>
+      <button class="btn" onclick="expandAll(false)">Collapse all</button>
+      <button class="btn" onclick="toggleTheme()" id="themeBtn">Dark mode</button>
+      <button class="btn primary" onclick="exportState()">Export state (JSON)</button>
+    </div>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section>
+    <h2 class="sec">Original priorities — scorecard</h2>
+    <div class="prio" id="prio"></div>
+  </section>
+
+  <section>
+    <h2 class="sec">Work packages</h2>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--critical)"></i> Critical — at risk of failing</span>
+      <span><i class="sw" style="background:var(--serious)"></i> Serious — needs a decision now</span>
+      <span><i class="sw" style="background:var(--warning)"></i> Warning — off track / unowned</span>
+      <span><i class="sw" style="background:var(--good)"></i> On track</span>
+    </div>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Search work packages and tasks…" oninput="render()">
+      <select id="fRag" onchange="render()">
+        <option value="">All RAG statuses</option>
+        <option value="critical">Critical</option>
+        <option value="serious">Serious</option>
+        <option value="warning">Warning</option>
+        <option value="good">On track</option>
+      </select>
+      <select id="fOwner" onchange="render()"></select>
+      <select id="fTheme" onchange="render()"></select>
+      <select id="fState" onchange="render()">
+        <option value="">All items</option>
+        <option value="open">Open tasks only</option>
+        <option value="decision">Decisions needed</option>
+        <option value="unowned">Unowned (TBC)</option>
+      </select>
+      <span class="spacer"></span>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="cards" id="cards" style="margin-top:12px"></div>
+  </section>
+
+  <section>
+    <h2 class="sec">Milestone timeline</h2>
+    <div class="tl" id="tl"></div>
+  </section>
+
+  <section>
+    <h2 class="sec">Decision &amp; update log</h2>
+    <div class="log">
+      <div id="logItems"></div>
+      <div class="noteform">
+        <input id="noteInput" placeholder="Add a note or decision from the latest meeting…" onkeydown="if(event.key==='Enter')addNote()">
+        <button class="btn primary" onclick="addNote()">Add</button>
+      </div>
+    </div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null/*__ENDDATA__*/;
+const TODAY = new Date(DATA.meta.generated + "T00:00:00");
+const ICON = { critical:"●", serious:"◆", warning:"▲", good:"✓" };
+const LABEL = { critical:"Critical", serious:"Serious", warning:"Warning", good:"On track" };
+const openSet = new Set();
+
+function person(k){ return (DATA.people[k] || {name:k}).name; }
+function initials(k){ return k === "TBC" ? "TBC" : k; }
+function fmtDate(s){
+  if(!s) return "not set";
+  const d = new Date(s + "T00:00:00");
+  return d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+}
+function daysFrom(s){
+  if(!s) return null;
+  return Math.round((new Date(s+"T00:00:00") - TODAY) / 86400000);
+}
+function pct(wp){
+  const t = wp.tasks.length; if(!t) return 0;
+  return Math.round(100 * wp.tasks.filter(x=>x.done).length / t);
+}
+
+/* ---------- header + kpis ---------- */
+function renderTop(){
+  document.getElementById("progTitle").textContent = DATA.meta.programme;
+  document.getElementById("progMeta").innerHTML =
+    "Project Manager <b>" + DATA.meta.pm + "</b> &nbsp;·&nbsp; " + DATA.meta.framework +
+    " &nbsp;·&nbsp; Source: " + DATA.meta.boardSource +
+    " &nbsp;·&nbsp; Dashboard v" + DATA.meta.version + ", " + fmtDate(DATA.meta.generated);
+  document.getElementById("foot").innerHTML =
+    "<b>How to keep this current:</b> tick sub-tasks as they complete, add notes below, then press " +
+    "<b>Export state (JSON)</b> and send the file back to Claude with your meeting minutes. " +
+    "The next version is regenerated from that state, so nothing is lost.<br>" +
+    DATA.meta.note;
+}
+
+function renderKpis(){
+  const wps = DATA.workPackages;
+  const allT = wps.reduce((a,w)=>a+w.tasks.length,0);
+  const doneT = wps.reduce((a,w)=>a+w.tasks.filter(t=>t.done).length,0);
+  const overall = allT ? Math.round(100*doneT/allT) : 0;
+  const crit = wps.filter(w=>w.rag==="critical").length;
+  const serious = wps.filter(w=>w.rag==="serious").length;
+  const decisions = wps.filter(w=>w.decision).length + wps.filter(w=>!w.due).length;
+  const unowned = wps.filter(w=>w.owner==="TBC").length;
+  const due14 = wps.filter(w=>{const d=daysFrom(w.due); return d!==null && d<=14;}).length;
+
+  const tiles = [
+    { lab:"Work packages", val:wps.length, sub:wps.length+" active · "+DATA.milestones.length+" milestones" },
+    { lab:"Overall completion", val:overall+"%", sub:doneT+" of "+allT+" sub-tasks done", meter:overall },
+    { lab:"Critical / serious", val:crit+" / "+serious, sub:"of "+wps.length+" work packages", tone: crit?"critical":"good" },
+    { lab:"Owners unassigned", val:unowned, sub:"work packages still marked TBC", tone: unowned?"warning":"good" },
+    { lab:"Due within 14 days", val:due14, sub:"1 milestone has no date at all" }
+  ];
+  document.getElementById("kpis").innerHTML = tiles.map(t=>
+    '<div class="kpi"><div class="lab">'+t.lab+'</div>'+
+    '<div class="val"'+(t.tone?' style="color:var(--'+t.tone+')"':'')+'>'+t.val+'</div>'+
+    '<div class="sub">'+t.sub+'</div>'+
+    (t.meter!==undefined?'<div class="meter"><i style="width:'+Math.max(t.meter,2)+'%"></i></div>':'')+
+    '</div>').join("");
+}
+
+/* ---------- priorities ---------- */
+function renderPrio(){
+  const map = { done:{ic:"✓",c:"good",t:"Done"}, partial:{ic:"◑",c:"warning",t:"Partly done"}, notdone:{ic:"●",c:"critical",t:"Not done"} };
+  document.getElementById("prio").innerHTML = DATA.priorities.map(p=>{
+    const m = map[p.state];
+    return '<div class="p"><div class="ic" style="color:var(--'+m.c+')">'+m.ic+'</div>'+
+      '<div><div class="tx">'+p.title+'</div>'+
+      '<div class="st" style="color:var(--'+m.c+')">'+m.t+'</div>'+
+      '<div class="wpref">Tracked in '+p.wp+'</div></div></div>';
+  }).join("");
+}
+
+/* ---------- filters ---------- */
+function fillFilters(){
+  const owners = [...new Set(DATA.workPackages.flatMap(w=>[w.owner, ...w.tasks.map(t=>t.owner)]))].sort();
+  document.getElementById("fOwner").innerHTML =
+    '<option value="">All owners</option>' + owners.map(o=>'<option value="'+o+'">'+person(o)+'</option>').join("");
+  const themes = [...new Set(DATA.workPackages.map(w=>w.theme))].sort();
+  document.getElementById("fTheme").innerHTML =
+    '<option value="">All workstreams</option>' + themes.map(t=>'<option value="'+t+'">'+t+'</option>').join("");
+}
+
+function matches(wp){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const rag = document.getElementById("fRag").value;
+  const own = document.getElementById("fOwner").value;
+  const th  = document.getElementById("fTheme").value;
+  const st  = document.getElementById("fState").value;
+  if(rag && wp.rag !== rag) return false;
+  if(th && wp.theme !== th) return false;
+  if(own && wp.owner !== own && !wp.tasks.some(t=>t.owner===own)) return false;
+  if(st === "open" && wp.tasks.every(t=>t.done)) return false;
+  if(st === "decision" && !wp.decision) return false;
+  if(st === "unowned" && wp.owner !== "TBC" && !wp.tasks.some(t=>t.owner==="TBC")) return false;
+  if(q){
+    const hay = (wp.id+" "+wp.title+" "+wp.theme+" "+(wp.openQuestion||"")+" "+wp.tasks.map(t=>t.t).join(" ")).toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+/* ---------- cards ---------- */
+function renderCards(){
+  const list = DATA.workPackages.filter(matches);
+  document.getElementById("count").textContent =
+    list.length + " of " + DATA.workPackages.length + " work packages shown";
+  document.getElementById("cards").innerHTML = list.map(wp=>{
+    const p = pct(wp);
+    const d = daysFrom(wp.due);
+    let dueChip;
+    if(!wp.due) dueChip = '<span class="chip overdue">' + ICON.serious + ' No target date set</span>';
+    else if(d < 0) dueChip = '<span class="chip overdue">Overdue by '+Math.abs(d)+'d — '+fmtDate(wp.due)+'</span>';
+    else dueChip = '<span class="chip">Due '+fmtDate(wp.due)+' · '+d+'d'+(wp.dueSource==="proposed"?' (proposed)':'')+'</span>';
+
+    return '<div class="card'+(openSet.has(wp.id)?" open":"")+'" id="c-'+wp.id+'">'+
+      '<div class="head" onclick="toggle(\''+wp.id+'\')">'+
+        '<div class="rag '+wp.rag+'"></div>'+
+        '<div class="caret">▶</div>'+
+        '<div class="hmain">'+
+          '<h3><span class="wpid">'+wp.id+'</span> '+wp.title+
+            (wp.priority?'<span class="chip">Original priority '+wp.priority+'</span>':'')+
+            (wp.milestone?'<span class="chip">Key milestone</span>':'')+'</h3>'+
+          (wp.openQuestion?'<div class="q">“'+wp.openQuestion+'”</div>':'')+
+          '<div class="chips">'+
+            '<span class="chip status '+wp.rag+'">'+ICON[wp.rag]+' '+LABEL[wp.rag]+'</span>'+
+            '<span class="chip">'+wp.theme+'</span>'+
+            '<span class="chip">Owner: '+person(wp.owner)+'</span>'+
+            '<span class="chip">Sponsor: '+person(wp.sponsor)+'</span>'+
+            dueChip +
+            (wp.decision?'<span class="chip decision">Decision needed</span>':'')+
+          '</div>'+
+        '</div>'+
+        '<div class="hright">'+
+          '<div class="pct">'+p+'%</div>'+
+          '<div class="pctsub">'+wp.tasks.filter(t=>t.done).length+'/'+wp.tasks.length+' tasks</div>'+
+          '<div class="meter"><i style="width:'+Math.max(p,2)+'%"></i></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="body">'+
+        '<div class="why"><b>Why this rating:</b> '+wp.ragReason+'</div>'+
+        '<ul class="tasks">'+ wp.tasks.map(t=>
+          '<li class="'+(t.done?"done":"")+'">'+
+            '<input type="checkbox" '+(t.done?"checked":"")+' onchange="tick(\''+wp.id+'\',\''+t.id+'\',this.checked)">'+
+            '<span class="tt">'+t.t+'</span>'+
+            '<span class="own chip">'+person(t.owner)+'</span>'+
+          '</li>').join("") + '</ul>'+
+        '<div class="deps">'+
+          '<span><b>Depends on:</b> '+(wp.dependsOn.length?wp.dependsOn.join(", "):"nothing")+'</span>'+
+          '<span><b>Blocks:</b> '+(wp.enables.length?wp.enables.join(", "):"nothing")+'</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join("") || '<div class="card" style="padding:20px;color:var(--ink-2)">No work packages match these filters.</div>';
+}
+
+/* ---------- timeline ---------- */
+function renderTimeline(){
+  const ms = DATA.milestones.slice().sort((a,b)=> (a.date||"9999").localeCompare(b.date||"9999"));
+  document.getElementById("tl").innerHTML = ms.map(m=>{
+    const wp = DATA.workPackages.find(w=>w.id===m.wp);
+    const rag = wp ? wp.rag : "warning";
+    const d = daysFrom(m.date);
+    let when;
+    if(!m.date) when = "date not set";
+    else if(d < 0) when = Math.abs(d)+" days overdue";
+    else if(d === 0) when = "today";
+    else when = "in "+d+" days";
+    return '<div class="tlrow">'+
+      '<div class="tldate">'+(m.date?fmtDate(m.date):"TBC")+'</div>'+
+      '<div class="tldot" style="background:var(--'+rag+')"></div>'+
+      '<div class="tllab">'+m.label+' <span class="chip">'+m.wp+'</span>'+
+        (m.source==="email"?' <span class="chip">from email</span>':'')+
+        (m.source==="proposed"?' <span class="chip">proposed</span>':'')+'</div>'+
+      '<div class="tlwhen">'+when+'</div>'+
+    '</div>';
+  }).join("");
+}
+
+/* ---------- log ---------- */
+function renderLog(){
+  document.getElementById("logItems").innerHTML = DATA.log.slice().reverse().map(l=>
+    '<div class="item"><div class="d">'+fmtDate(l.date)+'</div><div>'+l.entry+'</div></div>').join("");
+}
+function addNote(){
+  const el = document.getElementById("noteInput");
+  const v = el.value.trim(); if(!v) return;
+  DATA.log.push({ date: new Date().toISOString().slice(0,10), entry: v });
+  el.value = ""; renderLog();
+}
+
+/* ---------- interactions ---------- */
+function toggle(id){ openSet.has(id) ? openSet.delete(id) : openSet.add(id); renderCards(); }
+function expandAll(on){
+  openSet.clear();
+  if(on) DATA.workPackages.forEach(w=>openSet.add(w.id));
+  renderCards();
+}
+function tick(wpId, tId, val){
+  const wp = DATA.workPackages.find(w=>w.id===wpId);
+  const t = wp.tasks.find(x=>x.id===tId);
+  t.done = val;
+  renderKpis(); renderCards();
+}
+function toggleTheme(){
+  const r = document.documentElement;
+  const dark = r.getAttribute("data-theme") === "dark";
+  r.setAttribute("data-theme", dark ? "light" : "dark");
+  document.getElementById("themeBtn").textContent = dark ? "Dark mode" : "Light mode";
+}
+function exportState(){
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "sceib-dashboard-state-" + new Date().toISOString().slice(0,10) + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function render(){ renderCards(); }
+renderTop(); renderKpis(); renderPrio(); fillFilters(); renderCards(); renderTimeline(); renderLog();
+if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){ toggleTheme(); }
+</script>
+</body>
+</html>

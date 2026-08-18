@@ -1,0 +1,707 @@
+{
+  "meta": {
+    "programme": "Desider — SCIEB Programme",
+    "subtitle": "Delivery Dashboard",
+    "boardSource": "Attiq Qureshi, \"Catch up.\" — 17 Aug 2026, 05:46 BST",
+    "pm": "Salman Usman",
+    "version": 1,
+    "generated": "2026-08-18",
+    "framework": "PRINCE2 / MSP",
+    "note": "PUBLIC REDACTED COPY. Email addresses, financial figures and partner commercial terms have been removed. Statuses and RAG ratings marked 'proposed' are the PM's working assumption, not stated in the source. The unredacted master is held privately.",
+    "redacted": true
+  },
+  "people": {
+    "AQ": {
+      "name": "Attiq Qureshi",
+      "role": "Chair / Sponsor",
+      "email": ""
+    },
+    "FM": {
+      "name": "Fouad Malik",
+      "role": "Exec",
+      "email": ""
+    },
+    "KK": {
+      "name": "Khaqan Khan Mangol",
+      "role": "Exec (\"Khan\")",
+      "email": ""
+    },
+    "AM": {
+      "name": "Ahmad Mehboob",
+      "role": "Exec",
+      "email": ""
+    },
+    "SU": {
+      "name": "Salman Usman",
+      "role": "Project Manager",
+      "email": ""
+    },
+    "TBC": {
+      "name": "Unassigned",
+      "role": "Owner to be confirmed",
+      "email": ""
+    }
+  },
+  "priorities": [
+    {
+      "id": "P1",
+      "title": "Secure the Government extension in writing",
+      "status": "Not done",
+      "state": "notdone",
+      "wp": "WP1"
+    },
+    {
+      "id": "P2",
+      "title": "Secure the technology partner and start build of SCIEB",
+      "status": "Done",
+      "state": "done",
+      "wp": "WP5"
+    },
+    {
+      "id": "P3",
+      "title": "Secure the next stage of funding",
+      "status": "Partly",
+      "state": "partial",
+      "wp": "WP4"
+    },
+    {
+      "id": "P4",
+      "title": "Get access to the historical data",
+      "status": "Not done",
+      "state": "notdone",
+      "wp": "WP2"
+    }
+  ],
+  "workPackages": [
+    {
+      "id": "WP1",
+      "title": "Government Extension",
+      "theme": "Contract & Revenue",
+      "rag": "critical",
+      "ragReason": "Original #1 priority, still not secured in writing. Everything downstream (funding narrative, other Govt bodies) leans on it.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-08-31",
+      "dueSource": "proposed",
+      "priority": "P1",
+      "openQuestion": "Have the Government now formally sent/confirmed the extension, and are there any outstanding actions from us?",
+      "dependsOn": [],
+      "enables": [
+        "WP3",
+        "WP4"
+      ],
+      "tasks": [
+        {
+          "id": "WP1-1",
+          "t": "Establish the exact current position — who last spoke to the Government contact, and when",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP1-2",
+          "t": "Confirm whether formal written confirmation has been issued (email / letter / contract variation)",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP1-3",
+          "t": "List every outstanding action sitting on Desider's side and assign an owner to each",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP1-4",
+          "t": "Close out those outstanding actions",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP1-5",
+          "t": "Chase written confirmation in writing with a named contact and a date",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP1-6",
+          "t": "Record extension terms in the contract register — duration, scope, value, break clauses",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP1-7",
+          "t": "Agree an escalation route and trigger date if confirmation has not landed",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP1-8",
+          "t": "Circulate confirmed extension to the exec team and update the funding narrative",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP2",
+      "title": "Historical MHL Data Access",
+      "theme": "Data & Product",
+      "rag": "critical",
+      "ragReason": "Original priority, not done. The demo and the product's credibility both depend on real historical data.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-09-15",
+      "dueSource": "proposed",
+      "priority": "P4",
+      "openQuestion": "Are we going to get access to the historical data? Where has this got to, and what needs to happen to unlock it?",
+      "dependsOn": [],
+      "enables": [
+        "WP7"
+      ],
+      "tasks": [
+        {
+          "id": "WP2-1",
+          "t": "Define precisely what we need — datasets, fields, date range, volume, refresh frequency",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-2",
+          "t": "Identify the data owner / gatekeeper at MHL and the decision-maker above them",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-3",
+          "t": "Diagnose the actual blocker — legal, commercial, technical or political",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-4",
+          "t": "Draft or progress the Data Sharing Agreement / IG approval as required",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-5",
+          "t": "Agree secure transfer mechanism, format and anonymisation requirements",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-6",
+          "t": "Confirm ingestion and validation plan into SCIEB with ValueStack",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP2-7",
+          "t": "Agree a fallback — synthetic or sample data — so the demo is not held hostage",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP2-8",
+          "t": "Set a weekly chase cadence with a single named owner",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP3",
+      "title": "Other Government Opportunities",
+      "theme": "Contract & Revenue",
+      "rag": "warning",
+      "ragReason": "Real interest exists but is undocumented and unqualified. No pipeline register today.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-09-07",
+      "dueSource": "proposed",
+      "priority": "",
+      "openQuestion": "Which departments/bodies are interested, how real are the opportunities, and what are the actual steps we need to take to win them?",
+      "dependsOn": [
+        "WP7"
+      ],
+      "enables": [],
+      "tasks": [
+        {
+          "id": "WP3-1",
+          "t": "Build a pipeline register — body, contact, sponsor, stage, indicative value, next step",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP3-2",
+          "t": "Qualify each opportunity: budget held? sponsor identified? timeline real?",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP3-3",
+          "t": "Map the procurement route for each — framework, DPS, direct award, pilot",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP3-4",
+          "t": "Write a one-page capture plan per qualified opportunity",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP3-5",
+          "t": "Sequence each opportunity against the Government demo (WP7)",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP3-6",
+          "t": "Agree bid / no-bid criteria given current capacity",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP3-7",
+          "t": "Set a monthly pipeline review slot in the new meeting cadence",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP4",
+      "title": "Funding & Cash Position",
+      "theme": "Finance",
+      "rag": "critical",
+      "ragReason": "Funding received is materially below plan and constrains near-term delivery. [Figures redacted in this public copy.]",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-08-25",
+      "dueSource": "proposed",
+      "priority": "P3",
+      "openQuestion": "How do we deploy the cash we have, given we are short of plan?",
+      "dependsOn": [],
+      "enables": [
+        "WP5",
+        "WP6"
+      ],
+      "tasks": [
+        {
+          "id": "WP4-1",
+          "t": "Confirm the latest funding tranche — amount, date and any conditions attached",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP4-2",
+          "t": "Rebuild the 13-week rolling cash flow forecast",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP4-3",
+          "t": "Quantify the shortfall against plan and restate the runway end date [figures redacted]",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP4-4",
+          "t": "Model committed partner cost under the current arrangement",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP4-5",
+          "t": "Agree spend controls — approval thresholds and discretionary spend policy",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP4-6",
+          "t": "Define trigger points that force the next raise or a cost reduction",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP4-7",
+          "t": "Restart next-stage funding conversations and log the investor pipeline [names redacted]",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP4-8",
+          "t": "Add a standing finance item to the weekly session",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP5",
+      "title": "ValueStack Commercial Model",
+      "theme": "Partner & Build",
+      "rag": "warning",
+      "ragReason": "Build is underway (original priority DONE) but the partner commercial model is under active review. [Terms redacted in this public copy.]",
+      "owner": "KK",
+      "sponsor": "AQ",
+      "due": "2026-09-05",
+      "dueSource": "proposed",
+      "priority": "P2",
+      "decision": true,
+      "openQuestion": "Which commercial model do we run with the delivery partner? [Options redacted in this public copy.]",
+      "dependsOn": [
+        "WP4"
+      ],
+      "enables": [
+        "WP7"
+      ],
+      "tasks": [
+        {
+          "id": "WP5-1",
+          "t": "Schedule the dedicated Attiq / Khan decision session",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP5-2",
+          "t": "Document the current arrangement — commercial components and notice terms",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP5-3",
+          "t": "Model Option A: continue as-is — 12-month impact",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP5-4",
+          "t": "Model Option B: alternative structure — trade-offs assessed",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP5-5",
+          "t": "Assess delivery risk of each option on the SCIEB build and the demo date",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP5-6",
+          "t": "Test ValueStack's appetite before formally proposing a change",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP5-7",
+          "t": "Legal review of any amended terms and ownership impact",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP5-8",
+          "t": "Record the decision and execute the contract variation",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP6",
+      "title": "Pakistan Trip — September",
+      "theme": "Team & Ops",
+      "rag": "warning",
+      "ragReason": "Four-week lead time means the go/no-go decision is due now. Cost is material against the current position.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-08-21",
+      "dueSource": "proposed",
+      "priority": "",
+      "openQuestion": "3rd or 4th week of September — and is the value worth the spend?",
+      "dependsOn": [
+        "WP4"
+      ],
+      "enables": [],
+      "tasks": [
+        {
+          "id": "WP6-1",
+          "t": "Go / no-go decision against the current position",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP6-2",
+          "t": "Fix the window — week commencing 14 Sept or 21 Sept",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP6-3",
+          "t": "Confirm who travels and who is needed on the ground",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP6-4",
+          "t": "Set a budget cap and get it approved before booking",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP6-5",
+          "t": "Book flights and accommodation while fares are still sensible",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP6-6",
+          "t": "Check visas, documentation and local logistics",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP6-7",
+          "t": "Build the agenda around defined outcomes, not general catch-up",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP6-8",
+          "t": "Circulate pre-reads one week before travel",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP6-9",
+          "t": "Capture and assign post-trip actions within 48 hours of return",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP7",
+      "title": "New Product Government Demo",
+      "theme": "Data & Product",
+      "rag": "serious",
+      "ragReason": "Named by the sponsor as one of the most critical upcoming milestones — but no target date is set, which is itself the biggest risk.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "",
+      "dueSource": "notset",
+      "priority": "",
+      "milestone": true,
+      "openQuestion": "When are we targeting this, and who needs to be in the room?",
+      "dependsOn": [
+        "WP2",
+        "WP5"
+      ],
+      "enables": [
+        "WP3"
+      ],
+      "tasks": [
+        {
+          "id": "WP7-1",
+          "t": "SET THE TARGET DATE — this is the single biggest open item",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP7-2",
+          "t": "Confirm the Government attendee list and their decision-making authority",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP7-3",
+          "t": "Confirm the Desider contingent — Attiq has offered to attend",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP7-4",
+          "t": "Define demo scope: which user journeys and which outcomes we are proving",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP7-5",
+          "t": "Freeze the build scope with ValueStack and lock a code-freeze date",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP7-6",
+          "t": "Prepare the environment and demo data — real MHL data if unlocked, fallback if not",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP7-7",
+          "t": "Write the demo script and the leave-behind pack",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP7-8",
+          "t": "Dry run 1 — internal, two weeks out",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP7-9",
+          "t": "Dry run 2 — full dress rehearsal, one week out",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP7-10",
+          "t": "Agree the follow-up pack and re-use plan for the other interested Government bodies",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP8",
+      "title": "Governance & Meeting Cadence",
+      "theme": "Team & Ops",
+      "rag": "warning",
+      "ragReason": "Daily stand-up discipline has lapsed and ownership of priority tracking is an open question raised by the sponsor.",
+      "owner": "SU",
+      "sponsor": "AQ",
+      "due": "2026-08-21",
+      "dueSource": "proposed",
+      "priority": "",
+      "decision": true,
+      "openQuestion": "Does Attiq carry on chasing admin and organisation, or does it sit with Fouad or Salman?",
+      "dependsOn": [],
+      "enables": [
+        "WP1",
+        "WP2",
+        "WP3",
+        "WP4",
+        "WP5",
+        "WP6",
+        "WP7"
+      ],
+      "tasks": [
+        {
+          "id": "WP8-1",
+          "t": "Confirm ownership of priority tracking and programme admin (sponsor's open question)",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP8-2",
+          "t": "Agree the two weekly one-hour sessions — fixed day and time",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-3",
+          "t": "Issue recurring calendar invites to AQ, FM, KK, AM",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-4",
+          "t": "Confirm the ValueStack session cadence sits separately and does not collide",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP8-5",
+          "t": "Publish a standing agenda template mapped to these work packages",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-6",
+          "t": "Establish minutes plus a single action log with owner and date for every action",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-7",
+          "t": "Feed each set of minutes back into this dashboard within 24 hours",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-8",
+          "t": "Agree an exception-reporting rule — what gets escalated to the sponsor between sessions",
+          "owner": "AQ",
+          "done": false
+        }
+      ]
+    }
+  ],
+  "milestones": [
+    {
+      "date": "2026-08-21",
+      "label": "Meeting cadence reinstated",
+      "wp": "WP8",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-08-21",
+      "label": "Pakistan trip go / no-go",
+      "wp": "WP6",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-08-25",
+      "label": "13-week cash forecast rebuilt",
+      "wp": "WP4",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-08-31",
+      "label": "Government extension in writing",
+      "wp": "WP1",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-09-05",
+      "label": "ValueStack model decision",
+      "wp": "WP5",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-09-07",
+      "label": "Govt opportunity pipeline qualified",
+      "wp": "WP3",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-09-15",
+      "label": "MHL historical data unlocked",
+      "wp": "WP2",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-09-21",
+      "label": "Pakistan trip window (3rd/4th wk Sept)",
+      "wp": "WP6",
+      "source": "email"
+    },
+    {
+      "date": "",
+      "label": "Government product demo — DATE NOT SET",
+      "wp": "WP7",
+      "source": "notset"
+    }
+  ],
+  "log": [
+    {
+      "date": "2026-08-18",
+      "entry": "Dashboard created from Attiq's \"Catch up.\" email of 17 Aug 2026. All sub-tasks drafted by PM; owners marked TBC need assigning at the next session."
+    },
+    {
+      "date": "2026-08-18",
+      "entry": "Public redacted copy published to GitHub Pages. Emails, financial figures and partner commercial terms removed."
+    }
+  ]
+}
