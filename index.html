@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desider — SCIEB Programme Dashboard</title>
+<style>
+  :root{
+    color-scheme: light;
+    --surface-1:#fcfcfb; --page:#f9f9f7;
+    --ink-1:#0b0b0b; --ink-2:#52514e; --ink-3:#898781;
+    --grid:#e1e0d9; --axis:#c3c2b7;
+    --ring:rgba(11,11,11,0.10);
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+    --s100:#cde2fb; --s250:#86b6ef; --s450:#2a78d6; --s550:#1c5cab; --s650:#104281;
+    --accent:#2a78d6;
+    --chip:rgba(11,11,11,0.05);
+    --shadow:0 1px 2px rgba(11,11,11,.06), 0 8px 24px rgba(11,11,11,.05);
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --surface-1:#1a1a19; --page:#0d0d0d;
+    --ink-1:#ffffff; --ink-2:#c3c2b7; --ink-3:#898781;
+    --grid:#2c2c2a; --axis:#383835;
+    --ring:rgba(255,255,255,0.10);
+    --s100:#104281; --s250:#184f95; --s450:#3987e5; --s550:#86b6ef; --s650:#cde2fb;
+    --accent:#3987e5;
+    --chip:rgba(255,255,255,0.06);
+    --shadow:none;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--page); color:var(--ink-1);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:14px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1240px;margin:0 auto;padding:24px 20px 80px}
+
+  /* ---------- header ---------- */
+  header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+  .title h1{font-size:22px;margin:0 0 4px;letter-spacing:-.01em}
+  .title p{margin:0;color:var(--ink-2);font-size:12.5px}
+  .title p b{color:var(--ink-1);font-weight:600}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap}
+  button.btn{
+    font:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;cursor:pointer;
+    background:var(--surface-1);color:var(--ink-1);border:1px solid var(--ring);
+  }
+  button.btn:hover{background:var(--chip)}
+  button.btn.primary{background:var(--accent);color:#fff;border-color:transparent}
+  button.btn.primary:hover{filter:brightness(1.06)}
+
+  /* ---------- kpi row ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin-bottom:18px}
+  .kpi{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
+  .kpi .lab{font-size:11.5px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+  .kpi .val{font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+  .kpi .sub{font-size:11.5px;color:var(--ink-3);margin-top:4px}
+  .meter{height:8px;border-radius:4px;background:var(--grid);overflow:hidden;margin-top:9px}
+  .meter > i{display:block;height:100%;border-radius:4px;background:var(--s450)}
+
+  /* ---------- section ---------- */
+  section{margin-bottom:22px}
+  h2.sec{font-size:12.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-2);margin:0 0 10px;font-weight:600}
+
+  /* ---------- priorities ---------- */
+  .prio{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+  .prio .p{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:13px 14px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:flex-start}
+  .prio .p .ic{font-size:15px;line-height:1.35;flex:0 0 auto}
+  .prio .p .tx{font-size:13px}
+  .prio .p .st{font-size:11.5px;font-weight:600;margin-top:3px;display:flex;align-items:center;gap:5px}
+  .prio .p .wpref{font-size:11px;color:var(--ink-3);margin-top:2px}
+
+  /* ---------- filters ---------- */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:10px 12px;box-shadow:var(--shadow)}
+  .filters input[type=search], .filters select{
+    font:inherit;font-size:12.5px;padding:6px 9px;border-radius:8px;
+    border:1px solid var(--ring);background:var(--page);color:var(--ink-1);
+  }
+  .filters input[type=search]{min-width:210px}
+  .filters .spacer{flex:1}
+  .count{font-size:12px;color:var(--ink-2)}
+
+  /* ---------- work packages ---------- */
+  .cards{display:flex;flex-direction:column;gap:12px}
+  .card{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+  .card .head{display:flex;gap:13px;align-items:flex-start;padding:14px 16px;cursor:pointer}
+  .card .head:hover{background:var(--chip)}
+  .rag{flex:0 0 auto;width:9px;align-self:stretch;border-radius:5px;margin:2px 0}
+  .rag.critical{background:var(--critical)} .rag.serious{background:var(--serious)}
+  .rag.warning{background:var(--warning)} .rag.good{background:var(--good)}
+  .card .hmain{flex:1;min-width:0}
+  .card h3{margin:0 0 3px;font-size:15.5px;letter-spacing:-.01em;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .wpid{font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.06em}
+  .q{font-size:12.5px;color:var(--ink-2);margin:2px 0 8px;font-style:italic}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-size:11px;padding:2.5px 8px;border-radius:999px;background:var(--chip);color:var(--ink-2);white-space:nowrap}
+  .chip.status{font-weight:600;display:inline-flex;align-items:center;gap:4px}
+  .chip.status.critical{color:var(--critical)} .chip.status.serious{color:var(--serious)}
+  .chip.status.warning{color:#8a6100} .chip.status.good{color:#006300}
+  :root[data-theme="dark"] .chip.status.warning{color:var(--warning)}
+  :root[data-theme="dark"] .chip.status.good{color:var(--good)}
+  .chip.decision{color:var(--ink-1);border:1px dashed var(--axis);background:transparent;font-weight:600}
+  .chip.overdue{color:var(--critical);font-weight:600}
+  .card .hright{flex:0 0 auto;text-align:right;min-width:104px}
+  .pct{font-size:19px;font-weight:600;letter-spacing:-.01em}
+  .pctsub{font-size:11px;color:var(--ink-3)}
+  .card .hright .meter{width:100px;margin-left:auto}
+  .caret{flex:0 0 auto;color:var(--ink-3);font-size:12px;padding-top:4px;transition:transform .15s}
+  .card.open .caret{transform:rotate(90deg)}
+  .body{display:none;border-top:1px solid var(--grid);padding:14px 16px 16px}
+  .card.open .body{display:block}
+  .why{font-size:12.5px;color:var(--ink-2);background:var(--chip);border-radius:8px;padding:9px 11px;margin-bottom:12px}
+  .why b{color:var(--ink-1)}
+  ul.tasks{list-style:none;margin:0;padding:0}
+  ul.tasks li{display:flex;gap:10px;align-items:flex-start;padding:7px 6px;border-radius:8px}
+  ul.tasks li:hover{background:var(--chip)}
+  ul.tasks li + li{border-top:1px solid var(--grid)}
+  ul.tasks input[type=checkbox]{margin-top:2px;width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto}
+  ul.tasks .tt{flex:1;font-size:13px}
+  ul.tasks li.done .tt{text-decoration:line-through;color:var(--ink-3)}
+  ul.tasks .own{flex:0 0 auto}
+  .deps{margin-top:12px;font-size:12px;color:var(--ink-2);display:flex;gap:16px;flex-wrap:wrap}
+  .deps b{color:var(--ink-1);font-weight:600}
+
+  /* ---------- timeline ---------- */
+  .tl{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+  .tlrow{display:flex;gap:12px;align-items:center;padding:8px 4px;border-radius:8px}
+  .tlrow + .tlrow{border-top:1px solid var(--grid)}
+  .tlrow:hover{background:var(--chip)}
+  .tldate{flex:0 0 96px;font-size:12px;font-variant-numeric:tabular-nums;color:var(--ink-2);font-weight:600}
+  .tldot{flex:0 0 auto;width:10px;height:10px;border-radius:50%;box-shadow:0 0 0 2px var(--surface-1)}
+  .tllab{flex:1;font-size:13px}
+  .tlwhen{flex:0 0 auto;font-size:11.5px;color:var(--ink-3)}
+
+  /* ---------- log ---------- */
+  .log{background:var(--surface-1);border:1px solid var(--ring);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+  .log .item{display:flex;gap:12px;padding:8px 0;font-size:13px}
+  .log .item + .item{border-top:1px solid var(--grid)}
+  .log .d{flex:0 0 96px;color:var(--ink-3);font-size:12px;font-variant-numeric:tabular-nums}
+  .noteform{display:flex;gap:8px;margin-top:12px}
+  .noteform input{flex:1;font:inherit;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid var(--ring);background:var(--page);color:var(--ink-1)}
+
+  footer{margin-top:26px;font-size:11.5px;color:var(--ink-3);line-height:1.7}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-2);margin-bottom:10px}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .sw{width:9px;height:9px;border-radius:3px;display:inline-block}
+  .hidden{display:none !important}
+  @media (max-width:640px){
+    .card .head{flex-wrap:wrap}
+    .card .hright{min-width:0;text-align:left;width:100%}
+    .card .hright .meter{margin-left:0;width:100%}
+  }
+  @media print{ .toolbar,.filters,.noteform{display:none} .card .body{display:block} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="title">
+      <h1 id="progTitle">Programme Dashboard</h1>
+      <p id="progMeta"></p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" onclick="expandAll(true)">Expand all</button>
+      <button class="btn" onclick="expandAll(false)">Collapse all</button>
+      <button class="btn" onclick="toggleTheme()" id="themeBtn">Dark mode</button>
+      <button class="btn primary" onclick="exportState()">Export state (JSON)</button>
+    </div>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section>
+    <h2 class="sec">Original priorities — scorecard</h2>
+    <div class="prio" id="prio"></div>
+  </section>
+
+  <section>
+    <h2 class="sec">Work packages</h2>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--critical)"></i> Critical — at risk of failing</span>
+      <span><i class="sw" style="background:var(--serious)"></i> Serious — needs a decision now</span>
+      <span><i class="sw" style="background:var(--warning)"></i> Warning — off track / unowned</span>
+      <span><i class="sw" style="background:var(--good)"></i> On track</span>
+    </div>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Search work packages and tasks…" oninput="render()">
+      <select id="fRag" onchange="render()">
+        <option value="">All RAG statuses</option>
+        <option value="critical">Critical</option>
+        <option value="serious">Serious</option>
+        <option value="warning">Warning</option>
+        <option value="good">On track</option>
+      </select>
+      <select id="fOwner" onchange="render()"></select>
+      <select id="fTheme" onchange="render()"></select>
+      <select id="fState" onchange="render()">
+        <option value="">All items</option>
+        <option value="open">Open tasks only</option>
+        <option value="decision">Decisions needed</option>
+        <option value="unowned">Unowned (TBC)</option>
+      </select>
+      <span class="spacer"></span>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="cards" id="cards" style="margin-top:12px"></div>
+  </section>
+
+  <section>
+    <h2 class="sec">Milestone timeline</h2>
+    <div class="tl" id="tl"></div>
+  </section>
+
+  <section>
+    <h2 class="sec">Decision &amp; update log</h2>
+    <div class="log">
+      <div id="logItems"></div>
+      <div class="noteform">
+        <input id="noteInput" placeholder="Add a note or decision from the latest meeting…" onkeydown="if(event.key==='Enter')addNote()">
+        <button class="btn primary" onclick="addNote()">Add</button>
+      </div>
+    </div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/{
+  "meta": {
+    "programme": "Desider — SCIEB Programme",
+    "subtitle": "Delivery Dashboard",
+    "boardSource": "Attiq Qureshi, \"Catch up.\" — 17 Aug 2026, 05:46 BST",
+    "pm": "Salman Usman",
+    "version": 1,
+    "generated": "2026-08-18",
+    "framework": "PRINCE2 / MSP",
+    "note": "PUBLIC REDACTED COPY. Email addresses, financial figures and partner commercial terms have been removed. Statuses and RAG ratings marked 'proposed' are the PM's working assumption, not stated in the source. The unredacted master is held privately.",
+    "redacted": true
+  },
+  "people": {
+    "AQ": {
+      "name": "Attiq Qureshi",
+      "role": "Chair / Sponsor",
+      "email": ""
+    },
+    "FM": {
+      "name": "Fouad Malik",
+      "role": "Exec",
+      "email": ""
+    },
+    "KK": {
+      "name": "Khaqan Khan Mangol",
+      "role": "Exec (\"Khan\")",
+      "email": ""
+    },
+    "AM": {
+      "name": "Ahmad Mehboob",
+      "role": "Exec",
+      "email": ""
+    },
+    "SU": {
+      "name": "Salman Usman",
+      "role": "Project Manager",
+      "email": ""
+    },
+    "TBC": {
+      "name": "Unassigned",
+      "role": "Owner to be confirmed",
+      "email": ""
+    }
+  },
+  "priorities": [
+    {
+      "id": "P1",
+      "title": "Secure the Government extension in writing",
+      "status": "Not done",
+      "state": "notdone",
+      "wp": "WP1"
+    },
+    {
+      "id": "P2",
+      "title": "Secure the technology partner and start build of SCIEB",
+      "status": "Done",
+      "state": "done",
+      "wp": "WP5"
+    },
+    {
+      "id": "P3",
+      "title": "Secure the next stage of funding",
+      "status": "Partly",
+      "state": "partial",
+      "wp": "WP4"
+    },
+    {
+      "id": "P4",
+      "title": "Get access to the historical data",
+      "status": "Not done",
+      "state": "notdone",
+      "wp": "WP2"
+    }
+  ],
+  "workPackages": [
+    {
+      "id": "WP1",
+      "title": "Government Extension",
+      "theme": "Contract & Revenue",
+      "rag": "critical",
+      "ragReason": "Original #1 priority, still not secured in writing. Everything downstream (funding narrative, other Govt bodies) leans on it.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-08-31",
+      "dueSource": "proposed",
+      "priority": "P1",
+      "openQuestion": "Have the Government now formally sent/confirmed the extension, and are there any outstanding actions from us?",
+      "dependsOn": [],
+      "enables": [
+        "WP3",
+        "WP4"
+      ],
+      "tasks": [
+        {
+          "id": "WP1-1",
+          "t": "Establish the exact current position — who last spoke to the Government contact, and when",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP1-2",
+          "t": "Confirm whether formal written confirmation has been issued (email / letter / contract variation)",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP1-3",
+          "t": "List every outstanding action sitting on Desider's side and assign an owner to each",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP1-4",
+          "t": "Close out those outstanding actions",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP1-5",
+          "t": "Chase written confirmation in writing with a named contact and a date",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP1-6",
+          "t": "Record extension terms in the contract register — duration, scope, value, break clauses",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP1-7",
+          "t": "Agree an escalation route and trigger date if confirmation has not landed",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP1-8",
+          "t": "Circulate confirmed extension to the exec team and update the funding narrative",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP2",
+      "title": "Historical MHL Data Access",
+      "theme": "Data & Product",
+      "rag": "critical",
+      "ragReason": "Original priority, not done. The demo and the product's credibility both depend on real historical data.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-09-15",
+      "dueSource": "proposed",
+      "priority": "P4",
+      "openQuestion": "Are we going to get access to the historical data? Where has this got to, and what needs to happen to unlock it?",
+      "dependsOn": [],
+      "enables": [
+        "WP7"
+      ],
+      "tasks": [
+        {
+          "id": "WP2-1",
+          "t": "Define precisely what we need — datasets, fields, date range, volume, refresh frequency",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-2",
+          "t": "Identify the data owner / gatekeeper at MHL and the decision-maker above them",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-3",
+          "t": "Diagnose the actual blocker — legal, commercial, technical or political",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-4",
+          "t": "Draft or progress the Data Sharing Agreement / IG approval as required",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-5",
+          "t": "Agree secure transfer mechanism, format and anonymisation requirements",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP2-6",
+          "t": "Confirm ingestion and validation plan into SCIEB with ValueStack",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP2-7",
+          "t": "Agree a fallback — synthetic or sample data — so the demo is not held hostage",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP2-8",
+          "t": "Set a weekly chase cadence with a single named owner",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP3",
+      "title": "Other Government Opportunities",
+      "theme": "Contract & Revenue",
+      "rag": "warning",
+      "ragReason": "Real interest exists but is undocumented and unqualified. No pipeline register today.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-09-07",
+      "dueSource": "proposed",
+      "priority": "",
+      "openQuestion": "Which departments/bodies are interested, how real are the opportunities, and what are the actual steps we need to take to win them?",
+      "dependsOn": [
+        "WP7"
+      ],
+      "enables": [],
+      "tasks": [
+        {
+          "id": "WP3-1",
+          "t": "Build a pipeline register — body, contact, sponsor, stage, indicative value, next step",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP3-2",
+          "t": "Qualify each opportunity: budget held? sponsor identified? timeline real?",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP3-3",
+          "t": "Map the procurement route for each — framework, DPS, direct award, pilot",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP3-4",
+          "t": "Write a one-page capture plan per qualified opportunity",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP3-5",
+          "t": "Sequence each opportunity against the Government demo (WP7)",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP3-6",
+          "t": "Agree bid / no-bid criteria given current capacity",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP3-7",
+          "t": "Set a monthly pipeline review slot in the new meeting cadence",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP4",
+      "title": "Funding & Cash Position",
+      "theme": "Finance",
+      "rag": "critical",
+      "ragReason": "Funding received is materially below plan and constrains near-term delivery. [Figures redacted in this public copy.]",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-08-25",
+      "dueSource": "proposed",
+      "priority": "P3",
+      "openQuestion": "How do we deploy the cash we have, given we are short of plan?",
+      "dependsOn": [],
+      "enables": [
+        "WP5",
+        "WP6"
+      ],
+      "tasks": [
+        {
+          "id": "WP4-1",
+          "t": "Confirm the latest funding tranche — amount, date and any conditions attached",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP4-2",
+          "t": "Rebuild the 13-week rolling cash flow forecast",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP4-3",
+          "t": "Quantify the shortfall against plan and restate the runway end date [figures redacted]",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP4-4",
+          "t": "Model committed partner cost under the current arrangement",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP4-5",
+          "t": "Agree spend controls — approval thresholds and discretionary spend policy",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP4-6",
+          "t": "Define trigger points that force the next raise or a cost reduction",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP4-7",
+          "t": "Restart next-stage funding conversations and log the investor pipeline [names redacted]",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP4-8",
+          "t": "Add a standing finance item to the weekly session",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP5",
+      "title": "ValueStack Commercial Model",
+      "theme": "Partner & Build",
+      "rag": "warning",
+      "ragReason": "Build is underway (original priority DONE) but the partner commercial model is under active review. [Terms redacted in this public copy.]",
+      "owner": "KK",
+      "sponsor": "AQ",
+      "due": "2026-09-05",
+      "dueSource": "proposed",
+      "priority": "P2",
+      "decision": true,
+      "openQuestion": "Which commercial model do we run with the delivery partner? [Options redacted in this public copy.]",
+      "dependsOn": [
+        "WP4"
+      ],
+      "enables": [
+        "WP7"
+      ],
+      "tasks": [
+        {
+          "id": "WP5-1",
+          "t": "Schedule the dedicated Attiq / Khan decision session",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP5-2",
+          "t": "Document the current arrangement — commercial components and notice terms",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP5-3",
+          "t": "Model Option A: continue as-is — 12-month impact",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP5-4",
+          "t": "Model Option B: alternative structure — trade-offs assessed",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP5-5",
+          "t": "Assess delivery risk of each option on the SCIEB build and the demo date",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP5-6",
+          "t": "Test ValueStack's appetite before formally proposing a change",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP5-7",
+          "t": "Legal review of any amended terms and ownership impact",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP5-8",
+          "t": "Record the decision and execute the contract variation",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP6",
+      "title": "Pakistan Trip — September",
+      "theme": "Team & Ops",
+      "rag": "warning",
+      "ragReason": "Four-week lead time means the go/no-go decision is due now. Cost is material against the current position.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "2026-08-21",
+      "dueSource": "proposed",
+      "priority": "",
+      "openQuestion": "3rd or 4th week of September — and is the value worth the spend?",
+      "dependsOn": [
+        "WP4"
+      ],
+      "enables": [],
+      "tasks": [
+        {
+          "id": "WP6-1",
+          "t": "Go / no-go decision against the current position",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP6-2",
+          "t": "Fix the window — week commencing 14 Sept or 21 Sept",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP6-3",
+          "t": "Confirm who travels and who is needed on the ground",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP6-4",
+          "t": "Set a budget cap and get it approved before booking",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP6-5",
+          "t": "Book flights and accommodation while fares are still sensible",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP6-6",
+          "t": "Check visas, documentation and local logistics",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP6-7",
+          "t": "Build the agenda around defined outcomes, not general catch-up",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP6-8",
+          "t": "Circulate pre-reads one week before travel",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP6-9",
+          "t": "Capture and assign post-trip actions within 48 hours of return",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP7",
+      "title": "New Product Government Demo",
+      "theme": "Data & Product",
+      "rag": "serious",
+      "ragReason": "Named by the sponsor as one of the most critical upcoming milestones — but no target date is set, which is itself the biggest risk.",
+      "owner": "TBC",
+      "sponsor": "AQ",
+      "due": "",
+      "dueSource": "notset",
+      "priority": "",
+      "milestone": true,
+      "openQuestion": "When are we targeting this, and who needs to be in the room?",
+      "dependsOn": [
+        "WP2",
+        "WP5"
+      ],
+      "enables": [
+        "WP3"
+      ],
+      "tasks": [
+        {
+          "id": "WP7-1",
+          "t": "SET THE TARGET DATE — this is the single biggest open item",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP7-2",
+          "t": "Confirm the Government attendee list and their decision-making authority",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP7-3",
+          "t": "Confirm the Desider contingent — Attiq has offered to attend",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP7-4",
+          "t": "Define demo scope: which user journeys and which outcomes we are proving",
+          "owner": "TBC",
+          "done": false
+        },
+        {
+          "id": "WP7-5",
+          "t": "Freeze the build scope with ValueStack and lock a code-freeze date",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP7-6",
+          "t": "Prepare the environment and demo data — real MHL data if unlocked, fallback if not",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP7-7",
+          "t": "Write the demo script and the leave-behind pack",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP7-8",
+          "t": "Dry run 1 — internal, two weeks out",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP7-9",
+          "t": "Dry run 2 — full dress rehearsal, one week out",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP7-10",
+          "t": "Agree the follow-up pack and re-use plan for the other interested Government bodies",
+          "owner": "SU",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "WP8",
+      "title": "Governance & Meeting Cadence",
+      "theme": "Team & Ops",
+      "rag": "warning",
+      "ragReason": "Daily stand-up discipline has lapsed and ownership of priority tracking is an open question raised by the sponsor.",
+      "owner": "SU",
+      "sponsor": "AQ",
+      "due": "2026-08-21",
+      "dueSource": "proposed",
+      "priority": "",
+      "decision": true,
+      "openQuestion": "Does Attiq carry on chasing admin and organisation, or does it sit with Fouad or Salman?",
+      "dependsOn": [],
+      "enables": [
+        "WP1",
+        "WP2",
+        "WP3",
+        "WP4",
+        "WP5",
+        "WP6",
+        "WP7"
+      ],
+      "tasks": [
+        {
+          "id": "WP8-1",
+          "t": "Confirm ownership of priority tracking and programme admin (sponsor's open question)",
+          "owner": "AQ",
+          "done": false
+        },
+        {
+          "id": "WP8-2",
+          "t": "Agree the two weekly one-hour sessions — fixed day and time",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-3",
+          "t": "Issue recurring calendar invites to AQ, FM, KK, AM",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-4",
+          "t": "Confirm the ValueStack session cadence sits separately and does not collide",
+          "owner": "KK",
+          "done": false
+        },
+        {
+          "id": "WP8-5",
+          "t": "Publish a standing agenda template mapped to these work packages",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-6",
+          "t": "Establish minutes plus a single action log with owner and date for every action",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-7",
+          "t": "Feed each set of minutes back into this dashboard within 24 hours",
+          "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP8-8",
+          "t": "Agree an exception-reporting rule — what gets escalated to the sponsor between sessions",
+          "owner": "AQ",
+          "done": false
+        }
+      ]
+    }
+  ],
+  "milestones": [
+    {
+      "date": "2026-08-21",
+      "label": "Meeting cadence reinstated",
+      "wp": "WP8",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-08-21",
+      "label": "Pakistan trip go / no-go",
+      "wp": "WP6",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-08-25",
+      "label": "13-week cash forecast rebuilt",
+      "wp": "WP4",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-08-31",
+      "label": "Government extension in writing",
+      "wp": "WP1",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-09-05",
+      "label": "ValueStack model decision",
+      "wp": "WP5",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-09-07",
+      "label": "Govt opportunity pipeline qualified",
+      "wp": "WP3",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-09-15",
+      "label": "MHL historical data unlocked",
+      "wp": "WP2",
+      "source": "proposed"
+    },
+    {
+      "date": "2026-09-21",
+      "label": "Pakistan trip window (3rd/4th wk Sept)",
+      "wp": "WP6",
+      "source": "email"
+    },
+    {
+      "date": "",
+      "label": "Government product demo — DATE NOT SET",
+      "wp": "WP7",
+      "source": "notset"
+    }
+  ],
+  "log": [
+    {
+      "date": "2026-08-18",
+      "entry": "Dashboard created from Attiq's \"Catch up.\" email of 17 Aug 2026. All sub-tasks drafted by PM; owners marked TBC need assigning at the next session."
+    },
+    {
+      "date": "2026-08-18",
+      "entry": "Public redacted copy published to GitHub Pages. Emails, financial figures and partner commercial terms removed."
+    }
+  ]
+}/*__ENDDATA__*/;
+const TODAY = new Date(DATA.meta.generated + "T00:00:00");
+const ICON = { critical:"●", serious:"◆", warning:"▲", good:"✓" };
+const LABEL = { critical:"Critical", serious:"Serious", warning:"Warning", good:"On track" };
+const openSet = new Set();
+
+function person(k){ return (DATA.people[k] || {name:k}).name; }
+function initials(k){ return k === "TBC" ? "TBC" : k; }
+function fmtDate(s){
+  if(!s) return "not set";
+  const d = new Date(s + "T00:00:00");
+  return d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+}
+function daysFrom(s){
+  if(!s) return null;
+  return Math.round((new Date(s+"T00:00:00") - TODAY) / 86400000);
+}
+function pct(wp){
+  const t = wp.tasks.length; if(!t) return 0;
+  return Math.round(100 * wp.tasks.filter(x=>x.done).length / t);
+}
+
+/* ---------- header + kpis ---------- */
+function renderTop(){
+  document.getElementById("progTitle").textContent = DATA.meta.programme;
+  document.getElementById("progMeta").innerHTML =
+    "Project Manager <b>" + DATA.meta.pm + "</b> &nbsp;·&nbsp; " + DATA.meta.framework +
+    " &nbsp;·&nbsp; Source: " + DATA.meta.boardSource +
+    " &nbsp;·&nbsp; Dashboard v" + DATA.meta.version + ", " + fmtDate(DATA.meta.generated);
+  document.getElementById("foot").innerHTML =
+    "<b>How to keep this current:</b> tick sub-tasks as they complete, add notes below, then press " +
+    "<b>Export state (JSON)</b> and send the file back to Claude with your meeting minutes. " +
+    "The next version is regenerated from that state, so nothing is lost.<br>" +
+    DATA.meta.note;
+}
+
+function renderKpis(){
+  const wps = DATA.workPackages;
+  const allT = wps.reduce((a,w)=>a+w.tasks.length,0);
+  const doneT = wps.reduce((a,w)=>a+w.tasks.filter(t=>t.done).length,0);
+  const overall = allT ? Math.round(100*doneT/allT) : 0;
+  const crit = wps.filter(w=>w.rag==="critical").length;
+  const serious = wps.filter(w=>w.rag==="serious").length;
+  const decisions = wps.filter(w=>w.decision).length + wps.filter(w=>!w.due).length;
+  const unowned = wps.filter(w=>w.owner==="TBC").length;
+  const due14 = wps.filter(w=>{const d=daysFrom(w.due); return d!==null && d<=14;}).length;
+
+  const tiles = [
+    { lab:"Work packages", val:wps.length, sub:wps.length+" active · "+DATA.milestones.length+" milestones" },
+    { lab:"Overall completion", val:overall+"%", sub:doneT+" of "+allT+" sub-tasks done", meter:overall },
+    { lab:"Critical / serious", val:crit+" / "+serious, sub:"of "+wps.length+" work packages", tone: crit?"critical":"good" },
+    { lab:"Owners unassigned", val:unowned, sub:"work packages still marked TBC", tone: unowned?"warning":"good" },
+    { lab:"Due within 14 days", val:due14, sub:"1 milestone has no date at all" }
+  ];
+  document.getElementById("kpis").innerHTML = tiles.map(t=>
+    '<div class="kpi"><div class="lab">'+t.lab+'</div>'+
+    '<div class="val"'+(t.tone?' style="color:var(--'+t.tone+')"':'')+'>'+t.val+'</div>'+
+    '<div class="sub">'+t.sub+'</div>'+
+    (t.meter!==undefined?'<div class="meter"><i style="width:'+Math.max(t.meter,2)+'%"></i></div>':'')+
+    '</div>').join("");
+}
+
+/* ---------- priorities ---------- */
+function renderPrio(){
+  const map = { done:{ic:"✓",c:"good",t:"Done"}, partial:{ic:"◑",c:"warning",t:"Partly done"}, notdone:{ic:"●",c:"critical",t:"Not done"} };
+  document.getElementById("prio").innerHTML = DATA.priorities.map(p=>{
+    const m = map[p.state];
+    return '<div class="p"><div class="ic" style="color:var(--'+m.c+')">'+m.ic+'</div>'+
+      '<div><div class="tx">'+p.title+'</div>'+
+      '<div class="st" style="color:var(--'+m.c+')">'+m.t+'</div>'+
+      '<div class="wpref">Tracked in '+p.wp+'</div></div></div>';
+  }).join("");
+}
+
+/* ---------- filters ---------- */
+function fillFilters(){
+  const owners = [...new Set(DATA.workPackages.flatMap(w=>[w.owner, ...w.tasks.map(t=>t.owner)]))].sort();
+  document.getElementById("fOwner").innerHTML =
+    '<option value="">All owners</option>' + owners.map(o=>'<option value="'+o+'">'+person(o)+'</option>').join("");
+  const themes = [...new Set(DATA.workPackages.map(w=>w.theme))].sort();
+  document.getElementById("fTheme").innerHTML =
+    '<option value="">All workstreams</option>' + themes.map(t=>'<option value="'+t+'">'+t+'</option>').join("");
+}
+
+function matches(wp){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const rag = document.getElementById("fRag").value;
+  const own = document.getElementById("fOwner").value;
+  const th  = document.getElementById("fTheme").value;
+  const st  = document.getElementById("fState").value;
+  if(rag && wp.rag !== rag) return false;
+  if(th && wp.theme !== th) return false;
+  if(own && wp.owner !== own && !wp.tasks.some(t=>t.owner===own)) return false;
+  if(st === "open" && wp.tasks.every(t=>t.done)) return false;
+  if(st === "decision" && !wp.decision) return false;
+  if(st === "unowned" && wp.owner !== "TBC" && !wp.tasks.some(t=>t.owner==="TBC")) return false;
+  if(q){
+    const hay = (wp.id+" "+wp.title+" "+wp.theme+" "+(wp.openQuestion||"")+" "+wp.tasks.map(t=>t.t).join(" ")).toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+/* ---------- cards ---------- */
+function renderCards(){
+  const list = DATA.workPackages.filter(matches);
+  document.getElementById("count").textContent =
+    list.length + " of " + DATA.workPackages.length + " work packages shown";
+  document.getElementById("cards").innerHTML = list.map(wp=>{
+    const p = pct(wp);
+    const d = daysFrom(wp.due);
+    let dueChip;
+    if(!wp.due) dueChip = '<span class="chip overdue">' + ICON.serious + ' No target date set</span>';
+    else if(d < 0) dueChip = '<span class="chip overdue">Overdue by '+Math.abs(d)+'d — '+fmtDate(wp.due)+'</span>';
+    else dueChip = '<span class="chip">Due '+fmtDate(wp.due)+' · '+d+'d'+(wp.dueSource==="proposed"?' (proposed)':'')+'</span>';
+
+    return '<div class="card'+(openSet.has(wp.id)?" open":"")+'" id="c-'+wp.id+'">'+
+      '<div class="head" onclick="toggle(\''+wp.id+'\')">'+
+        '<div class="rag '+wp.rag+'"></div>'+
+        '<div class="caret">▶</div>'+
+        '<div class="hmain">'+
+          '<h3><span class="wpid">'+wp.id+'</span> '+wp.title+
+            (wp.priority?'<span class="chip">Original priority '+wp.priority+'</span>':'')+
+            (wp.milestone?'<span class="chip">Key milestone</span>':'')+'</h3>'+
+          (wp.openQuestion?'<div class="q">“'+wp.openQuestion+'”</div>':'')+
+          '<div class="chips">'+
+            '<span class="chip status '+wp.rag+'">'+ICON[wp.rag]+' '+LABEL[wp.rag]+'</span>'+
+            '<span class="chip">'+wp.theme+'</span>'+
+            '<span class="chip">Owner: '+person(wp.owner)+'</span>'+
+            '<span class="chip">Sponsor: '+person(wp.sponsor)+'</span>'+
+            dueChip +
+            (wp.decision?'<span class="chip decision">Decision needed</span>':'')+
+          '</div>'+
+        '</div>'+
+        '<div class="hright">'+
+          '<div class="pct">'+p+'%</div>'+
+          '<div class="pctsub">'+wp.tasks.filter(t=>t.done).length+'/'+wp.tasks.length+' tasks</div>'+
+          '<div class="meter"><i style="width:'+Math.max(p,2)+'%"></i></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="body">'+
+        '<div class="why"><b>Why this rating:</b> '+wp.ragReason+'</div>'+
+        '<ul class="tasks">'+ wp.tasks.map(t=>
+          '<li class="'+(t.done?"done":"")+'">'+
+            '<input type="checkbox" '+(t.done?"checked":"")+' onchange="tick(\''+wp.id+'\',\''+t.id+'\',this.checked)">'+
+            '<span class="tt">'+t.t+'</span>'+
+            '<span class="own chip">'+person(t.owner)+'</span>'+
+          '</li>').join("") + '</ul>'+
+        '<div class="deps">'+
+          '<span><b>Depends on:</b> '+(wp.dependsOn.length?wp.dependsOn.join(", "):"nothing")+'</span>'+
+          '<span><b>Blocks:</b> '+(wp.enables.length?wp.enables.join(", "):"nothing")+'</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join("") || '<div class="card" style="padding:20px;color:var(--ink-2)">No work packages match these filters.</div>';
+}
+
+/* ---------- timeline ---------- */
+function renderTimeline(){
+  const ms = DATA.milestones.slice().sort((a,b)=> (a.date||"9999").localeCompare(b.date||"9999"));
+  document.getElementById("tl").innerHTML = ms.map(m=>{
+    const wp = DATA.workPackages.find(w=>w.id===m.wp);
+    const rag = wp ? wp.rag : "warning";
+    const d = daysFrom(m.date);
+    let when;
+    if(!m.date) when = "date not set";
+    else if(d < 0) when = Math.abs(d)+" days overdue";
+    else if(d === 0) when = "today";
+    else when = "in "+d+" days";
+    return '<div class="tlrow">'+
+      '<div class="tldate">'+(m.date?fmtDate(m.date):"TBC")+'</div>'+
+      '<div class="tldot" style="background:var(--'+rag+')"></div>'+
+      '<div class="tllab">'+m.label+' <span class="chip">'+m.wp+'</span>'+
+        (m.source==="email"?' <span class="chip">from email</span>':'')+
+        (m.source==="proposed"?' <span class="chip">proposed</span>':'')+'</div>'+
+      '<div class="tlwhen">'+when+'</div>'+
+    '</div>';
+  }).join("");
+}
+
+/* ---------- log ---------- */
+function renderLog(){
+  document.getElementById("logItems").innerHTML = DATA.log.slice().reverse().map(l=>
+    '<div class="item"><div class="d">'+fmtDate(l.date)+'</div><div>'+l.entry+'</div></div>').join("");
+}
+function addNote(){
+  const el = document.getElementById("noteInput");
+  const v = el.value.trim(); if(!v) return;
+  DATA.log.push({ date: new Date().toISOString().slice(0,10), entry: v });
+  el.value = ""; renderLog();
+}
+
+/* ---------- interactions ---------- */
+function toggle(id){ openSet.has(id) ? openSet.delete(id) : openSet.add(id); renderCards(); }
+function expandAll(on){
+  openSet.clear();
+  if(on) DATA.workPackages.forEach(w=>openSet.add(w.id));
+  renderCards();
+}
+function tick(wpId, tId, val){
+  const wp = DATA.workPackages.find(w=>w.id===wpId);
+  const t = wp.tasks.find(x=>x.id===tId);
+  t.done = val;
+  renderKpis(); renderCards();
+}
+function toggleTheme(){
+  const r = document.documentElement;
+  const dark = r.getAttribute("data-theme") === "dark";
+  r.setAttribute("data-theme", dark ? "light" : "dark");
+  document.getElementById("themeBtn").textContent = dark ? "Dark mode" : "Light mode";
+}
+function exportState(){
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "sceib-dashboard-state-" + new Date().toISOString().slice(0,10) + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function render(){ renderCards(); }
+renderTop(); renderKpis(); renderPrio(); fillFilters(); renderCards(); renderTimeline(); renderLog();
+if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){ toggleTheme(); }
+</script>
+</body>
+</html>

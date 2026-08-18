@@ -1,0 +1,21 @@
+# Never commit the unredacted programme state
+data.private.json
+src/data.private.json
+*.private.json
+redact.py
+
+# Exported state files downloaded from the dashboard (may be unredacted)
+sceib-dashboard-state-*.json
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
