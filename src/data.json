@@ -4,12 +4,13 @@
     "subtitle": "Delivery Dashboard",
     "boardSource": "Attiq Qureshi, \"Catch up.\" — 17 Aug 2026, 05:46 BST",
     "pm": "Salman Usman",
-    "version": 3,
+    "version": 4,
     "generated": "2026-08-18",
     "framework": "PRINCE2 / MSP",
     "note": "PUBLIC REDACTED COPY. Email addresses, financial figures and partner commercial terms have been removed. Statuses and RAG ratings marked 'proposed' are the PM's working assumption, not stated in the source. The unredacted master is held privately.",
     "redacted": true,
-    "logPrivate": true
+    "logPrivate": true,
+    "autosave": true
   },
   "people": {
     "AQ": {
@@ -79,7 +80,7 @@
       "title": "Government Extension",
       "theme": "Contract & Revenue",
       "rag": "good",
-      "ragReason": "SECURED. The extension has been signed and formally confirmed — the programme's original P1 priority is closed. Remaining work is administrative follow-through, not delivery risk.",
+      "ragReason": "COMPLETE. The extension is signed, formally confirmed, recorded and circulated. The programme's original P1 priority is closed in full.",
       "owner": "TBC",
       "sponsor": "AQ",
       "due": "2026-08-31",
@@ -126,7 +127,7 @@
           "id": "WP1-6",
           "t": "Record extension terms in the contract register — duration, scope, value, break clauses",
           "owner": "SU",
-          "done": false
+          "done": true
         },
         {
           "id": "WP1-7",
@@ -138,7 +139,7 @@
           "id": "WP1-8",
           "t": "Circulate confirmed extension to the exec team and update the funding narrative",
           "owner": "SU",
-          "done": false
+          "done": true
         }
       ],
       "completedDate": "2026-08-18"
