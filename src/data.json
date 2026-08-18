@@ -4,7 +4,7 @@
     "subtitle": "Delivery Dashboard",
     "boardSource": "Attiq Qureshi, \"Catch up.\" — 17 Aug 2026, 05:46 BST",
     "pm": "Salman Usman",
-    "version": 1,
+    "version": 2,
     "generated": "2026-08-18",
     "framework": "PRINCE2 / MSP",
     "note": "PUBLIC REDACTED COPY. Email addresses, financial figures and partner commercial terms have been removed. Statuses and RAG ratings marked 'proposed' are the PM's working assumption, not stated in the source. The unredacted master is held privately.",
@@ -46,8 +46,8 @@
     {
       "id": "P1",
       "title": "Secure the Government extension in writing",
-      "status": "Not done",
-      "state": "notdone",
+      "status": "Done",
+      "state": "done",
       "wp": "WP1"
     },
     {
@@ -77,14 +77,14 @@
       "id": "WP1",
       "title": "Government Extension",
       "theme": "Contract & Revenue",
-      "rag": "critical",
-      "ragReason": "Original #1 priority, still not secured in writing. Everything downstream (funding narrative, other Govt bodies) leans on it.",
+      "rag": "good",
+      "ragReason": "SECURED. The extension has been signed and formally confirmed — the programme's original P1 priority is closed. Remaining work is administrative follow-through, not delivery risk.",
       "owner": "TBC",
       "sponsor": "AQ",
       "due": "2026-08-31",
       "dueSource": "proposed",
       "priority": "P1",
-      "openQuestion": "Have the Government now formally sent/confirmed the extension, and are there any outstanding actions from us?",
+      "openQuestion": "Closed — extension signed and confirmed.",
       "dependsOn": [],
       "enables": [
         "WP3",
@@ -95,31 +95,31 @@
           "id": "WP1-1",
           "t": "Establish the exact current position — who last spoke to the Government contact, and when",
           "owner": "TBC",
-          "done": false
+          "done": true
         },
         {
           "id": "WP1-2",
-          "t": "Confirm whether formal written confirmation has been issued (email / letter / contract variation)",
+          "t": "Written confirmation received — extension signed and formally confirmed",
           "owner": "TBC",
-          "done": false
+          "done": true
         },
         {
           "id": "WP1-3",
           "t": "List every outstanding action sitting on Desider's side and assign an owner to each",
           "owner": "SU",
-          "done": false
+          "done": true
         },
         {
           "id": "WP1-4",
           "t": "Close out those outstanding actions",
           "owner": "TBC",
-          "done": false
+          "done": true
         },
         {
           "id": "WP1-5",
           "t": "Chase written confirmation in writing with a named contact and a date",
           "owner": "TBC",
-          "done": false
+          "done": true
         },
         {
           "id": "WP1-6",
@@ -129,9 +129,9 @@
         },
         {
           "id": "WP1-7",
-          "t": "Agree an escalation route and trigger date if confirmation has not landed",
+          "t": "Escalation route — no longer required, extension secured",
           "owner": "AQ",
-          "done": false
+          "done": true
         },
         {
           "id": "WP1-8",
@@ -139,7 +139,8 @@
           "owner": "SU",
           "done": false
         }
-      ]
+      ],
+      "completedDate": "2026-08-18"
     },
     {
       "id": "WP2",
@@ -266,6 +267,12 @@
           "t": "Set a monthly pipeline review slot in the new meeting cadence",
           "owner": "SU",
           "done": false
+        },
+        {
+          "id": "WP3-8",
+          "t": "Use the signed extension as a live reference and proof point in opportunity conversations",
+          "owner": "TBC",
+          "done": false
         }
       ]
     },
@@ -333,6 +340,12 @@
           "id": "WP4-8",
           "t": "Add a standing finance item to the weekly session",
           "owner": "SU",
+          "done": false
+        },
+        {
+          "id": "WP4-9",
+          "t": "Rework the funding narrative around the signed extension — secured revenue de-risks the raise",
+          "owner": "AQ",
           "done": false
         }
       ]
@@ -658,10 +671,11 @@
       "source": "proposed"
     },
     {
-      "date": "2026-08-31",
-      "label": "Government extension in writing",
+      "date": "2026-08-18",
+      "label": "Government extension signed",
       "wp": "WP1",
-      "source": "proposed"
+      "source": "confirmed",
+      "done": true
     },
     {
       "date": "2026-09-05",
@@ -698,6 +712,10 @@
     {
       "date": "2026-08-18",
       "entry": "Dashboard created from Attiq's \"Catch up.\" email of 17 Aug 2026. All sub-tasks drafted by PM; owners marked TBC need assigning at the next session."
+    },
+    {
+      "date": "2026-08-18",
+      "entry": "<b>Government extension SIGNED and confirmed.</b> WP1 moves to green and original priority P1 closes as Done. Two follow-through tasks remain open: record the terms in the contract register, and circulate to the exec team. Two new tasks added downstream — use the extension as a reference in WP3, and rework the funding narrative around it in WP4."
     },
     {
       "date": "2026-08-18",

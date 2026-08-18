@@ -104,6 +104,11 @@
   :root[data-theme="dark"] .chip.status.good{color:var(--good)}
   .chip.decision{color:var(--ink-1);border:1px dashed var(--axis);background:transparent;font-weight:600}
   .chip.overdue{color:var(--critical);font-weight:600}
+  .chip.done{color:#006300;font-weight:600;background:rgba(12,163,12,.10)}
+  :root[data-theme="dark"] .chip.done{color:var(--good);background:rgba(12,163,12,.16)}
+  .card.secured .head h3{}
+  .tlrow.achieved .tldate,.tlrow.achieved .tllab{opacity:.72}
+  .tlrow.achieved .tllab{text-decoration:line-through;text-decoration-color:var(--axis)}
   .card .hright{flex:0 0 auto;text-align:right;min-width:104px}
   .pct{font-size:19px;font-weight:600;letter-spacing:-.01em}
   .pctsub{font-size:11px;color:var(--ink-3)}
@@ -278,7 +283,9 @@ function renderKpis(){
   const due14 = wps.filter(w=>{const d=daysFrom(w.due); return d!==null && d<=14;}).length;
 
   const tiles = [
-    { lab:"Work packages", val:wps.length, sub:wps.length+" active · "+DATA.milestones.length+" milestones" },
+    { lab:"Original priorities", val:DATA.priorities.filter(p=>p.state==="done").length+" / "+DATA.priorities.length,
+      sub:"closed · "+DATA.priorities.filter(p=>p.state==="partial").length+" partly, "+DATA.priorities.filter(p=>p.state==="notdone").length+" open",
+      tone: DATA.priorities.filter(p=>p.state==="done").length >= 2 ? "good" : undefined },
     { lab:"Overall completion", val:overall+"%", sub:doneT+" of "+allT+" sub-tasks done", meter:overall },
     { lab:"Critical / serious", val:crit+" / "+serious, sub:"of "+wps.length+" work packages", tone: crit?"critical":"good" },
     { lab:"Owners unassigned", val:unowned, sub:"work packages still marked TBC", tone: unowned?"warning":"good" },
@@ -342,7 +349,8 @@ function renderCards(){
     const p = pct(wp);
     const d = daysFrom(wp.due);
     let dueChip;
-    if(!wp.due) dueChip = '<span class="chip overdue">' + ICON.serious + ' No target date set</span>';
+    if(wp.completedDate) dueChip = '<span class="chip done">✓ Secured '+fmtDate(wp.completedDate)+'</span>';
+    else if(!wp.due) dueChip = '<span class="chip overdue">' + ICON.serious + ' No target date set</span>';
     else if(d < 0) dueChip = '<span class="chip overdue">Overdue by '+Math.abs(d)+'d — '+fmtDate(wp.due)+'</span>';
     else dueChip = '<span class="chip">Due '+fmtDate(wp.due)+' · '+d+'d'+(wp.dueSource==="proposed"?' (proposed)':'')+'</span>';
 
@@ -395,17 +403,19 @@ function renderTimeline(){
     const rag = wp ? wp.rag : "warning";
     const d = daysFrom(m.date);
     let when;
-    if(!m.date) when = "date not set";
+    if(m.done) when = "achieved";
+    else if(!m.date) when = "date not set";
     else if(d < 0) when = Math.abs(d)+" days overdue";
     else if(d === 0) when = "today";
     else when = "in "+d+" days";
-    return '<div class="tlrow">'+
+    return '<div class="tlrow'+(m.done?" achieved":"")+'">'+
       '<div class="tldate">'+(m.date?fmtDate(m.date):"TBC")+'</div>'+
-      '<div class="tldot" style="background:var(--'+rag+')"></div>'+
-      '<div class="tllab">'+m.label+' <span class="chip">'+m.wp+'</span>'+
+      '<div class="tldot" style="background:var(--'+(m.done?"good":rag)+')"></div>'+
+      '<div class="tllab">'+(m.done?"✓ ":"")+m.label+' <span class="chip">'+m.wp+'</span>'+
         (m.source==="email"?' <span class="chip">from email</span>':'')+
-        (m.source==="proposed"?' <span class="chip">proposed</span>':'')+'</div>'+
-      '<div class="tlwhen">'+when+'</div>'+
+        (m.source==="proposed"?' <span class="chip">proposed</span>':'')+
+        (m.source==="confirmed"?' <span class="chip done">confirmed</span>':'')+'</div>'+
+      '<div class="tlwhen"'+(m.done?' style="color:var(--good);font-weight:600"':'')+'>'+when+'</div>'+
     '</div>';
   }).join("");
 }
