@@ -4,7 +4,7 @@ An interactive PRINCE2 / MSP delivery dashboard for the SCIEB programme. Single
 self-contained HTML file — no build step needed to view it, no dependencies, no
 tracking, no server.
 
-**Live dashboard:** **https://susman2005.github.io/desider-holdings/**
+**Live dashboard:** **https://aislabz.github.io/desider-holdings/**
 
 ---
 
@@ -67,7 +67,7 @@ dashboard carries its own change history.
 3. Under **Source**, choose **Deploy from a branch**.
 4. Set branch to `main` and folder to `/ (root)`. Save.
 5. Wait ~60 seconds. The site appears at
-   `https://susman2005.github.io/desider-holdings/`.
+   `https://aislabz.github.io/desider-holdings/`.
 
 `.nojekyll` is included so GitHub serves the files as-is rather than running
 them through Jekyll.
