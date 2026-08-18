@@ -8,7 +8,8 @@
     "generated": "2026-08-18",
     "framework": "PRINCE2 / MSP",
     "note": "PUBLIC REDACTED COPY. Email addresses, financial figures and partner commercial terms have been removed. Statuses and RAG ratings marked 'proposed' are the PM's working assumption, not stated in the source. The unredacted master is held privately.",
-    "redacted": true
+    "redacted": true,
+    "logPrivate": true
   },
   "people": {
     "AQ": {
@@ -753,22 +754,5 @@
       "source": "notset"
     }
   ],
-  "log": [
-    {
-      "date": "2026-08-18",
-      "entry": "Dashboard created from Attiq's \"Catch up.\" email of 17 Aug 2026. All sub-tasks drafted by PM; owners marked TBC need assigning at the next session."
-    },
-    {
-      "date": "2026-08-18",
-      "entry": "<b>Government extension SIGNED and confirmed.</b> WP1 moves to green and original priority P1 closes as Done. Two follow-through tasks remain open: record the terms in the contract register, and circulate to the exec team. Two new tasks added downstream — use the extension as a reference in WP3, and rework the funding narrative around it in WP4."
-    },
-    {
-      "date": "2026-08-18",
-      "entry": "<b>Ownership corrected.</b> Funding, finance and cash position (WP4) now owned by Fouad Malik — the PM is removed from all finance tasks; chair-level calls stay with Attiq with Fouad supporting. Product development and ValueStack work (WP5, WP7, and the SCIEB data tasks in WP2) now show Ahmad Mehboob alongside Khan. WP7 gains a named owner (Khan) — it was unassigned."
-    },
-    {
-      "date": "2026-08-18",
-      "entry": "Public redacted copy published to GitHub Pages. Emails, financial figures and partner commercial terms removed."
-    }
-  ]
+  "log": []
 }

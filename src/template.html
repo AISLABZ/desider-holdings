@@ -224,7 +224,7 @@
     <div class="tl" id="tl"></div>
   </section>
 
-  <section>
+  <section id="logSection">
     <h2 class="sec">Decision &amp; update log</h2>
     <div class="log">
       <div id="logItems"></div>
@@ -268,10 +268,12 @@ function renderTop(){
     "Project Manager <b>" + DATA.meta.pm + "</b> &nbsp;·&nbsp; " + DATA.meta.framework +
     " &nbsp;·&nbsp; Source: " + DATA.meta.boardSource +
     " &nbsp;·&nbsp; Dashboard v" + DATA.meta.version + ", " + fmtDate(DATA.meta.generated);
-  document.getElementById("foot").innerHTML =
-    "<b>How to keep this current:</b> tick sub-tasks as they complete, add notes below, then press " +
-    "<b>Export state (JSON)</b> and send the file back to Claude with your meeting minutes. " +
-    "The next version is regenerated from that state, so nothing is lost.<br>" +
+  document.getElementById("foot").innerHTML = (DATA.meta.logPrivate
+    ? "<b>Keeping this current:</b> tick sub-tasks as they complete, then press <b>Export state (JSON)</b> " +
+      "and send the file to the PM. The decision and update log is held privately and is not part of this copy.<br>"
+    : "<b>How to keep this current:</b> tick sub-tasks as they complete, add notes below, then press " +
+      "<b>Export state (JSON)</b> and send the file back to Claude with your meeting minutes. " +
+      "The next version is regenerated from that state, so nothing is lost.<br>") +
     DATA.meta.note;
 }
 
@@ -430,6 +432,14 @@ function renderTimeline(){
 
 /* ---------- log ---------- */
 function renderLog(){
+  // The decision & update log is internal. It is stripped from the public
+  // build (meta.logPrivate) and the whole section is removed from the DOM —
+  // not merely hidden with CSS, so nothing is recoverable from page source.
+  if(DATA.meta.logPrivate){
+    const s = document.getElementById("logSection");
+    if(s) s.remove();
+    return;
+  }
   document.getElementById("logItems").innerHTML = DATA.log.slice().reverse().map(l=>
     '<div class="item"><div class="d">'+fmtDate(l.date)+'</div><div>'+l.entry+'</div></div>').join("");
 }
