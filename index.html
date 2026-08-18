@@ -64,6 +64,8 @@
   .savebar.saved .dot{background:var(--good)}
   .savebar b{font-weight:600}
   .savebar .hint{color:var(--ink-2)}
+  .savebar .spacer{flex:1}
+  .savebar button.btn{font-size:12px;padding:5px 10px;flex:0 0 auto}
   button.btn.pulse{box-shadow:0 0 0 3px rgba(250,178,25,.35)}
 
   /* ---------- kpi row ---------- */
@@ -263,12 +265,13 @@ const DATA = /*__DATA__*/{
     "subtitle": "Delivery Dashboard",
     "boardSource": "Attiq Qureshi, \"Catch up.\" — 17 Aug 2026, 05:46 BST",
     "pm": "Salman Usman",
-    "version": 3,
+    "version": 4,
     "generated": "2026-08-18",
     "framework": "PRINCE2 / MSP",
     "note": "PUBLIC REDACTED COPY. Email addresses, financial figures and partner commercial terms have been removed. Statuses and RAG ratings marked 'proposed' are the PM's working assumption, not stated in the source. The unredacted master is held privately.",
     "redacted": true,
-    "logPrivate": true
+    "logPrivate": true,
+    "autosave": true
   },
   "people": {
     "AQ": {
@@ -338,7 +341,7 @@ const DATA = /*__DATA__*/{
       "title": "Government Extension",
       "theme": "Contract & Revenue",
       "rag": "good",
-      "ragReason": "SECURED. The extension has been signed and formally confirmed — the programme's original P1 priority is closed. Remaining work is administrative follow-through, not delivery risk.",
+      "ragReason": "COMPLETE. The extension is signed, formally confirmed, recorded and circulated. The programme's original P1 priority is closed in full.",
       "owner": "TBC",
       "sponsor": "AQ",
       "due": "2026-08-31",
@@ -385,7 +388,7 @@ const DATA = /*__DATA__*/{
           "id": "WP1-6",
           "t": "Record extension terms in the contract register — duration, scope, value, break clauses",
           "owner": "SU",
-          "done": false
+          "done": true
         },
         {
           "id": "WP1-7",
@@ -397,7 +400,7 @@ const DATA = /*__DATA__*/{
           "id": "WP1-8",
           "t": "Circulate confirmed extension to the exec team and update the funding narrative",
           "owner": "SU",
-          "done": false
+          "done": true
         }
       ],
       "completedDate": "2026-08-18"
@@ -1044,11 +1047,15 @@ function renderTop(){
     " &nbsp;·&nbsp; Source: " + DATA.meta.boardSource +
     " &nbsp;·&nbsp; Dashboard v" + DATA.meta.version + ", " + fmtDate(DATA.meta.generated);
   document.getElementById("foot").innerHTML =
-    "<b>Saving your work:</b> this page has no server and stores nothing in your browser, so changes " +
-    "are lost when you close it. Tick tasks" + (DATA.meta.logPrivate ? "" : " and add notes") +
-    ", press <b>Save progress</b> to download the updated file, and use <b>Open saved file</b> to pick " +
-    "up where you left off. Send that file to the PM to have the published dashboard rebuilt from it — " +
-    "that is what makes an update visible to everyone rather than just you.<br>" +
+    (DATA.meta.autosave
+      ? "<b>Saving your work:</b> your ticks are kept in this browser automatically, so they survive " +
+        "closing the tab. That is per-device and private to you — nobody else sees them, and they will " +
+        "not appear on anyone else's copy. To share progress, press <b>Save progress</b> and send the " +
+        "file to the PM; the published dashboard is rebuilt from it so the whole team sees the update. " +
+        "<b>Open saved file</b> restores a file someone sends you.<br>"
+      : "<b>Saving your work:</b> this copy stores nothing, so changes are lost when you close it. " +
+        "Tick tasks" + (DATA.meta.logPrivate ? "" : " and add notes") + ", press <b>Save progress</b> to " +
+        "download the updated file, and use <b>Open saved file</b> to pick up where you left off.<br>") +
     (DATA.meta.logPrivate ? "The decision and update log is held privately and is not part of this copy.<br>" : "") +
     DATA.meta.note;
 }
@@ -1248,9 +1255,51 @@ function tick(wpId, tId, val){
    change durable: send it to the PM and the published dashboard is rebuilt from
    it, so everyone sees the update rather than just your browser.
 ----------------------------------------------------------------------------- */
-let dirty = false, lastSaved = null;
+let dirty = false, lastSaved = null, autoStamp = null;
 
-function markDirty(){ dirty = true; renderSaveBar(); }
+/* Autosave keeps your ticks in THIS browser so they survive closing the tab.
+   It is enabled only on the published web copy (meta.autosave) — it is off in
+   the offline//artifact copy, where browser storage isn't available.
+   It is per-browser and per-device: it does NOT share your progress with anyone
+   else. Use Save progress for that. */
+const LS_KEY = "sceib-dashboard-state-v1";
+function autosaveOn(){
+  if(!DATA.meta.autosave) return false;
+  try { const k="__t"; localStorage.setItem(k,"1"); localStorage.removeItem(k); return true; }
+  catch(e){ return false; }
+}
+function autosave(){
+  if(!autosaveOn()) return false;
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ v: DATA.meta.version||0, at: Date.now(), data: DATA }));
+    autoStamp = new Date().toTimeString().slice(0,5);
+    return true;
+  } catch(e){ return false; }   // quota or private mode — fall back to manual save
+}
+function restoreAutosave(){
+  if(!autosaveOn()) return false;
+  let o;
+  try { const raw = localStorage.getItem(LS_KEY); if(!raw) return false; o = JSON.parse(raw); }
+  catch(e){ return false; }
+  if(!o || !o.data || !Array.isArray(o.data.workPackages) || !o.data.workPackages.length) return false;
+  // A newer published version supersedes stale local edits, so a republished
+  // dashboard is never masked by what this browser happens to remember.
+  if((o.v||0) < (DATA.meta.version||0)){ try{ localStorage.removeItem(LS_KEY); }catch(e){} return "superseded"; }
+  ["meta","people","priorities","workPackages","milestones","log"].forEach(k=>{
+    if(o.data[k] !== undefined) DATA[k] = o.data[k];
+  });
+  autoStamp = new Date(o.at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+  return true;
+}
+function discardLocal(){
+  try { localStorage.removeItem(LS_KEY); } catch(e){}
+  location.reload();
+}
+
+function markDirty(){
+  if(autosave()){ dirty = false; } else { dirty = true; }
+  renderSaveBar();
+}
 
 function renderSaveBar(){
   const bar = document.getElementById("saveBar");
@@ -1259,10 +1308,19 @@ function renderSaveBar(){
   if(dirty){
     bar.className = "savebar show unsaved";
     bar.innerHTML = '<span class="dot"></span><b>Unsaved changes.</b>' +
-      '<span class="hint">This page can\'t remember them on its own — press ' +
+      '<span class="hint">This copy can\'t remember them on its own — press ' +
       '<b>Save progress</b> to download your updated file, then re-open it here next time ' +
       '(or send it to the PM to publish for everyone).</span>';
     btn.classList.add("pulse");
+  } else if(autoStamp){
+    bar.className = "savebar show saved";
+    bar.innerHTML = '<span class="dot"></span><b>Kept in this browser</b>' +
+      '<span class="hint">Last change '+autoStamp+'. Your ticks stay here when you close the tab — ' +
+      'but only on this device, and nobody else sees them. Press <b>Save progress</b> and send the ' +
+      'file to the PM to have it published for the team.</span>' +
+      '<span class="spacer"></span>' +
+      '<button class="btn" onclick="discardLocal()">Discard my changes</button>';
+    btn.classList.remove("pulse");
   } else if(lastSaved){
     bar.className = "savebar show saved";
     bar.innerHTML = '<span class="dot"></span><b>Saved at '+lastSaved+'.</b>' +
@@ -1335,7 +1393,17 @@ function toggleTheme(){
   document.getElementById("themeBtn").textContent = dark ? "Dark mode" : "Light mode";
 }
 function render(){ renderCards(); }
-renderTop(); renderKpis(); renderPrio(); fillFilters(); renderCards(); renderTimeline(); renderLog(); renderSaveBar();
+
+const restored = restoreAutosave();
+renderTop(); renderKpis(); renderPrio(); fillFilters(); renderCards(); renderTimeline(); renderLog();
+renderSaveBar();
+if(restored === "superseded"){
+  const bar = document.getElementById("saveBar");
+  bar.className = "savebar show";
+  bar.innerHTML = '<span class="dot" style="background:var(--s450)"></span><b>Newer version published.</b>' +
+    '<span class="hint">A more recent dashboard has been published, so your earlier local ticks were ' +
+    'cleared to avoid showing you stale information. You are on version '+DATA.meta.version+'.</span>';
+}
 if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){ toggleTheme(); }
 </script>
 </body>
