@@ -105,6 +105,10 @@
   .chip.decision{color:var(--ink-1);border:1px dashed var(--axis);background:transparent;font-weight:600}
   .chip.overdue{color:var(--critical);font-weight:600}
   .chip.done{color:#006300;font-weight:600;background:rgba(12,163,12,.10)}
+  .chip.with{background:transparent;border:1px dashed var(--axis);color:var(--ink-2)}
+  .chip.unowned{color:#8a6100;background:rgba(250,178,25,.14);font-weight:600}
+  :root[data-theme="dark"] .chip.unowned{color:var(--warning)}
+  ul.tasks .own{margin-left:2px}
   :root[data-theme="dark"] .chip.done{color:var(--good);background:rgba(12,163,12,.16)}
   .card.secured .head h3{}
   .tlrow.achieved .tldate,.tlrow.achieved .tllab{opacity:.72}
@@ -241,7 +245,7 @@ const DATA = /*__DATA__*/{
     "subtitle": "Delivery Dashboard",
     "boardSource": "Attiq Qureshi, \"Catch up.\" — 17 Aug 2026, 05:46 BST",
     "pm": "Salman Usman",
-    "version": 2,
+    "version": 3,
     "generated": "2026-08-18",
     "framework": "PRINCE2 / MSP",
     "note": "PUBLIC REDACTED COPY. Email addresses, financial figures and partner commercial terms have been removed. Statuses and RAG ratings marked 'proposed' are the PM's working assumption, not stated in the source. The unredacted master is held privately.",
@@ -399,7 +403,7 @@ const DATA = /*__DATA__*/{
         {
           "id": "WP2-1",
           "t": "Define precisely what we need — datasets, fields, date range, volume, refresh frequency",
-          "owner": "TBC",
+          "owner": "AM",
           "done": false
         },
         {
@@ -430,7 +434,10 @@ const DATA = /*__DATA__*/{
           "id": "WP2-6",
           "t": "Confirm ingestion and validation plan into SCIEB with ValueStack",
           "owner": "KK",
-          "done": false
+          "done": false,
+          "with": [
+            "AM"
+          ]
         },
         {
           "id": "WP2-7",
@@ -518,8 +525,8 @@ const DATA = /*__DATA__*/{
       "title": "Funding & Cash Position",
       "theme": "Finance",
       "rag": "critical",
-      "ragReason": "Funding received is materially below plan and constrains near-term delivery. [Figures redacted in this public copy.]",
-      "owner": "TBC",
+      "ragReason": "Funding received is materially below plan and constrains near-term delivery. [Figures redacted in this public copy.] Owned by Fouad Malik — finance and cash position sit with him, not the PM.",
+      "owner": "FM",
       "sponsor": "AQ",
       "due": "2026-08-25",
       "dueSource": "proposed",
@@ -534,19 +541,19 @@ const DATA = /*__DATA__*/{
         {
           "id": "WP4-1",
           "t": "Confirm the latest funding tranche — amount, date and any conditions attached",
-          "owner": "TBC",
+          "owner": "FM",
           "done": false
         },
         {
           "id": "WP4-2",
           "t": "Rebuild the 13-week rolling cash flow forecast",
-          "owner": "TBC",
+          "owner": "FM",
           "done": false
         },
         {
           "id": "WP4-3",
           "t": "Quantify the shortfall against plan and restate the runway end date [figures redacted]",
-          "owner": "TBC",
+          "owner": "FM",
           "done": false
         },
         {
@@ -559,31 +566,43 @@ const DATA = /*__DATA__*/{
           "id": "WP4-5",
           "t": "Agree spend controls — approval thresholds and discretionary spend policy",
           "owner": "AQ",
-          "done": false
+          "done": false,
+          "with": [
+            "FM"
+          ]
         },
         {
           "id": "WP4-6",
           "t": "Define trigger points that force the next raise or a cost reduction",
           "owner": "AQ",
-          "done": false
+          "done": false,
+          "with": [
+            "FM"
+          ]
         },
         {
           "id": "WP4-7",
           "t": "Restart next-stage funding conversations and log the investor pipeline [names redacted]",
           "owner": "AQ",
-          "done": false
+          "done": false,
+          "with": [
+            "FM"
+          ]
         },
         {
           "id": "WP4-8",
-          "t": "Add a standing finance item to the weekly session",
-          "owner": "SU",
+          "t": "Own the standing finance item at the weekly session (PM schedules it)",
+          "owner": "FM",
           "done": false
         },
         {
           "id": "WP4-9",
           "t": "Rework the funding narrative around the signed extension — secured revenue de-risks the raise",
           "owner": "AQ",
-          "done": false
+          "done": false,
+          "with": [
+            "FM"
+          ]
         }
       ]
     },
@@ -592,7 +611,7 @@ const DATA = /*__DATA__*/{
       "title": "ValueStack Commercial Model",
       "theme": "Partner & Build",
       "rag": "warning",
-      "ragReason": "Build is underway (original priority DONE) but the partner commercial model is under active review. [Terms redacted in this public copy.]",
+      "ragReason": "Build is underway (original priority DONE) but the partner commercial model is under active review. [Terms redacted in this public copy.] Khan leads the commercial conversation; Ahmad Mehboob is across the delivery side.",
       "owner": "KK",
       "sponsor": "AQ",
       "due": "2026-09-05",
@@ -617,25 +636,37 @@ const DATA = /*__DATA__*/{
           "id": "WP5-2",
           "t": "Document the current arrangement — commercial components and notice terms",
           "owner": "KK",
-          "done": false
+          "done": false,
+          "with": [
+            "AM"
+          ]
         },
         {
           "id": "WP5-3",
           "t": "Model Option A: continue as-is — 12-month impact",
           "owner": "KK",
-          "done": false
+          "done": false,
+          "with": [
+            "AM"
+          ]
         },
         {
           "id": "WP5-4",
           "t": "Model Option B: alternative structure — trade-offs assessed",
           "owner": "KK",
-          "done": false
+          "done": false,
+          "with": [
+            "AM"
+          ]
         },
         {
           "id": "WP5-5",
           "t": "Assess delivery risk of each option on the SCIEB build and the demo date",
           "owner": "KK",
-          "done": false
+          "done": false,
+          "with": [
+            "AM"
+          ]
         },
         {
           "id": "WP5-6",
@@ -655,6 +686,9 @@ const DATA = /*__DATA__*/{
           "owner": "SU",
           "done": false
         }
+      ],
+      "support": [
+        "AM"
       ]
     },
     {
@@ -678,7 +712,10 @@ const DATA = /*__DATA__*/{
           "id": "WP6-1",
           "t": "Go / no-go decision against the current position",
           "owner": "AQ",
-          "done": false
+          "done": false,
+          "with": [
+            "FM"
+          ]
         },
         {
           "id": "WP6-2",
@@ -696,7 +733,10 @@ const DATA = /*__DATA__*/{
           "id": "WP6-4",
           "t": "Set a budget cap and get it approved before booking",
           "owner": "AQ",
-          "done": false
+          "done": false,
+          "with": [
+            "FM"
+          ]
         },
         {
           "id": "WP6-5",
@@ -735,8 +775,8 @@ const DATA = /*__DATA__*/{
       "title": "New Product Government Demo",
       "theme": "Data & Product",
       "rag": "serious",
-      "ragReason": "Named by the sponsor as one of the most critical upcoming milestones — but no target date is set, which is itself the biggest risk.",
-      "owner": "TBC",
+      "ragReason": "Named by the sponsor as one of the most critical upcoming milestones — but no target date is set, which is itself the biggest risk. Khan and Ahmad Mehboob jointly own the build and environment.",
+      "owner": "KK",
       "sponsor": "AQ",
       "due": "",
       "dueSource": "notset",
@@ -760,7 +800,7 @@ const DATA = /*__DATA__*/{
         {
           "id": "WP7-2",
           "t": "Confirm the Government attendee list and their decision-making authority",
-          "owner": "TBC",
+          "owner": "AQ",
           "done": false
         },
         {
@@ -772,20 +812,26 @@ const DATA = /*__DATA__*/{
         {
           "id": "WP7-4",
           "t": "Define demo scope: which user journeys and which outcomes we are proving",
-          "owner": "TBC",
+          "owner": "AM",
           "done": false
         },
         {
           "id": "WP7-5",
           "t": "Freeze the build scope with ValueStack and lock a code-freeze date",
           "owner": "KK",
-          "done": false
+          "done": false,
+          "with": [
+            "AM"
+          ]
         },
         {
           "id": "WP7-6",
           "t": "Prepare the environment and demo data — real MHL data if unlocked, fallback if not",
           "owner": "KK",
-          "done": false
+          "done": false,
+          "with": [
+            "AM"
+          ]
         },
         {
           "id": "WP7-7",
@@ -811,6 +857,9 @@ const DATA = /*__DATA__*/{
           "owner": "SU",
           "done": false
         }
+      ],
+      "support": [
+        "AM"
       ]
     },
     {
@@ -956,6 +1005,10 @@ const DATA = /*__DATA__*/{
     },
     {
       "date": "2026-08-18",
+      "entry": "<b>Ownership corrected.<\/b> Funding, finance and cash position (WP4) now owned by Fouad Malik — the PM is removed from all finance tasks; chair-level calls stay with Attiq with Fouad supporting. Product development and ValueStack work (WP5, WP7, and the SCIEB data tasks in WP2) now show Ahmad Mehboob alongside Khan. WP7 gains a named owner (Khan) — it was unassigned."
+    },
+    {
+      "date": "2026-08-18",
       "entry": "Public redacted copy published to GitHub Pages. Emails, financial figures and partner commercial terms removed."
     }
   ]
@@ -1037,7 +1090,8 @@ function renderPrio(){
 
 /* ---------- filters ---------- */
 function fillFilters(){
-  const owners = [...new Set(DATA.workPackages.flatMap(w=>[w.owner, ...w.tasks.map(t=>t.owner)]))].sort();
+  const owners = [...new Set(DATA.workPackages.flatMap(w=>
+    [w.owner, ...(w.support||[]), ...w.tasks.flatMap(t=>[t.owner, ...(t.with||[])])]))].sort();
   document.getElementById("fOwner").innerHTML =
     '<option value="">All owners</option>' + owners.map(o=>'<option value="'+o+'">'+person(o)+'</option>').join("");
   const themes = [...new Set(DATA.workPackages.map(w=>w.theme))].sort();
@@ -1053,7 +1107,8 @@ function matches(wp){
   const st  = document.getElementById("fState").value;
   if(rag && wp.rag !== rag) return false;
   if(th && wp.theme !== th) return false;
-  if(own && wp.owner !== own && !wp.tasks.some(t=>t.owner===own)) return false;
+  if(own && wp.owner !== own && !(wp.support||[]).includes(own) &&
+     !wp.tasks.some(t=>t.owner===own || (t.with||[]).includes(own))) return false;
   if(st === "open" && wp.tasks.every(t=>t.done)) return false;
   if(st === "decision" && !wp.decision) return false;
   if(st === "unowned" && wp.owner !== "TBC" && !wp.tasks.some(t=>t.owner==="TBC")) return false;
@@ -1090,7 +1145,8 @@ function renderCards(){
           '<div class="chips">'+
             '<span class="chip status '+wp.rag+'">'+ICON[wp.rag]+' '+LABEL[wp.rag]+'</span>'+
             '<span class="chip">'+wp.theme+'</span>'+
-            '<span class="chip">Owner: '+person(wp.owner)+'</span>'+
+            '<span class="chip'+(wp.owner==="TBC"?' unowned':'')+'">Owner: '+person(wp.owner)+'</span>'+
+            ((wp.support||[]).length?'<span class="chip">With: '+wp.support.map(person).join(", ")+'</span>':'')+
             '<span class="chip">Sponsor: '+person(wp.sponsor)+'</span>'+
             dueChip +
             (wp.decision?'<span class="chip decision">Decision needed</span>':'')+
@@ -1109,6 +1165,7 @@ function renderCards(){
             '<input type="checkbox" '+(t.done?"checked":"")+' onchange="tick(\''+wp.id+'\',\''+t.id+'\',this.checked)">'+
             '<span class="tt">'+t.t+'</span>'+
             '<span class="own chip">'+person(t.owner)+'</span>'+
+            ((t.with||[]).map(w=>'<span class="own chip with">+ '+person(w)+'</span>').join(""))+
           '</li>').join("") + '</ul>'+
         '<div class="deps">'+
           '<span><b>Depends on:</b> '+(wp.dependsOn.length?wp.dependsOn.join(", "):"nothing")+'</span>'+
