@@ -224,7 +224,7 @@
     <div class="tl" id="tl"></div>
   </section>
 
-  <section>
+  <section id="logSection">
     <h2 class="sec">Decision &amp; update log</h2>
     <div class="log">
       <div id="logItems"></div>
@@ -249,7 +249,8 @@ const DATA = /*__DATA__*/{
     "generated": "2026-08-18",
     "framework": "PRINCE2 / MSP",
     "note": "PUBLIC REDACTED COPY. Email addresses, financial figures and partner commercial terms have been removed. Statuses and RAG ratings marked 'proposed' are the PM's working assumption, not stated in the source. The unredacted master is held privately.",
-    "redacted": true
+    "redacted": true,
+    "logPrivate": true
   },
   "people": {
     "AQ": {
@@ -994,24 +995,7 @@ const DATA = /*__DATA__*/{
       "source": "notset"
     }
   ],
-  "log": [
-    {
-      "date": "2026-08-18",
-      "entry": "Dashboard created from Attiq's \"Catch up.\" email of 17 Aug 2026. All sub-tasks drafted by PM; owners marked TBC need assigning at the next session."
-    },
-    {
-      "date": "2026-08-18",
-      "entry": "<b>Government extension SIGNED and confirmed.<\/b> WP1 moves to green and original priority P1 closes as Done. Two follow-through tasks remain open: record the terms in the contract register, and circulate to the exec team. Two new tasks added downstream — use the extension as a reference in WP3, and rework the funding narrative around it in WP4."
-    },
-    {
-      "date": "2026-08-18",
-      "entry": "<b>Ownership corrected.<\/b> Funding, finance and cash position (WP4) now owned by Fouad Malik — the PM is removed from all finance tasks; chair-level calls stay with Attiq with Fouad supporting. Product development and ValueStack work (WP5, WP7, and the SCIEB data tasks in WP2) now show Ahmad Mehboob alongside Khan. WP7 gains a named owner (Khan) — it was unassigned."
-    },
-    {
-      "date": "2026-08-18",
-      "entry": "Public redacted copy published to GitHub Pages. Emails, financial figures and partner commercial terms removed."
-    }
-  ]
+  "log": []
 }/*__ENDDATA__*/;
 const TODAY = new Date(DATA.meta.generated + "T00:00:00");
 const ICON = { critical:"●", serious:"◆", warning:"▲", good:"✓" };
@@ -1041,10 +1025,12 @@ function renderTop(){
     "Project Manager <b>" + DATA.meta.pm + "</b> &nbsp;·&nbsp; " + DATA.meta.framework +
     " &nbsp;·&nbsp; Source: " + DATA.meta.boardSource +
     " &nbsp;·&nbsp; Dashboard v" + DATA.meta.version + ", " + fmtDate(DATA.meta.generated);
-  document.getElementById("foot").innerHTML =
-    "<b>How to keep this current:</b> tick sub-tasks as they complete, add notes below, then press " +
-    "<b>Export state (JSON)</b> and send the file back to Claude with your meeting minutes. " +
-    "The next version is regenerated from that state, so nothing is lost.<br>" +
+  document.getElementById("foot").innerHTML = (DATA.meta.logPrivate
+    ? "<b>Keeping this current:</b> tick sub-tasks as they complete, then press <b>Export state (JSON)</b> " +
+      "and send the file to the PM. The decision and update log is held privately and is not part of this copy.<br>"
+    : "<b>How to keep this current:</b> tick sub-tasks as they complete, add notes below, then press " +
+      "<b>Export state (JSON)</b> and send the file back to Claude with your meeting minutes. " +
+      "The next version is regenerated from that state, so nothing is lost.<br>") +
     DATA.meta.note;
 }
 
@@ -1203,6 +1189,14 @@ function renderTimeline(){
 
 /* ---------- log ---------- */
 function renderLog(){
+  // The decision & update log is internal. It is stripped from the public
+  // build (meta.logPrivate) and the whole section is removed from the DOM —
+  // not merely hidden with CSS, so nothing is recoverable from page source.
+  if(DATA.meta.logPrivate){
+    const s = document.getElementById("logSection");
+    if(s) s.remove();
+    return;
+  }
   document.getElementById("logItems").innerHTML = DATA.log.slice().reverse().map(l=>
     '<div class="item"><div class="d">'+fmtDate(l.date)+'</div><div>'+l.entry+'</div></div>').join("");
 }
